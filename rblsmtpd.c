@@ -25,10 +25,6 @@ void usage(void)
 {
   strerr_die1x(100,"rblsmtpd: usage: rblsmtpd [ -B ] [ -b ] [ -C ] [ -c ] [ -i ] [ -t timeout ] [ -r base ] [ -a base ] [-W] [-w delay] smtpd [ arg ... ]");
 }
-void env(char *s, char *t) 
-{
- if (!pathexec_env(s,t)) nomem();
-}
 
 char *tcp_proto;
 char *ip_env;
@@ -187,10 +183,6 @@ void rblinfo(void)
     if ((message.s[i] < 32) || (message.s[i] > 126))
       message.s[i] = '?';
 
-  if (!stralloc_copy(&info,&message)) nomem();
-  if (!stralloc_0(&info)) nomem();
-  env("RBLSMTPD",info.s);
-
   buffer_puts(buffer_2,"rblsmtpd: ");
   buffer_puts(buffer_2,ip_env);
   buffer_puts(buffer_2," pid ");
@@ -199,6 +191,10 @@ void rblinfo(void)
   buffer_put(buffer_2,message.s,message.len);
   buffer_puts(buffer_2,"\n");
   buffer_flush(buffer_2);
+
+  if (!stralloc_copy(&info,&message)) nomem();
+  if (!stralloc_0(&info)) nomem();
+  if (!pathexec_env("RBLSMTPD",info.s)) nomem();
 }
 
 void reject() { buffer_putflush(&out,message.s,message.len); }
@@ -301,7 +297,7 @@ int main(int argc,char **argv,char **envp)
     rblsmtpd();
   
 
-  pathexec_run(*argv,argv,envp);
+  pathexec(argv);
   strerr_die4sys(111,FATAL,"unable to run ",*argv,": ");
 
   return 0;

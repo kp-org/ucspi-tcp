@@ -193,6 +193,9 @@
 	added interrogation mode (and not stub any more).
 	added IPv6 lookup for anti-rbl.
 	changed behavior on greedelay option.
-	
+20130206 (feh)
+	flaw: replaced pathexec_run with pathexec in call of client 
+	since otherwise modified env will not be promoted
+	and interrogation mode failes.
 
-ucspi-tcp6 -- version: 0.97, beta.
+ucspi-tcp6 -- version: 0.98, beta.

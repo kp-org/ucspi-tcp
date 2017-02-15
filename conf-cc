@@ -1,4 +1,4 @@
-gcc -O2 -g
+gcc -O2 -g 
 
 This will be used to compile .c files.
 
