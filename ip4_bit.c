@@ -79,7 +79,7 @@ int getbitasaddress(stralloc *ip4string)
   
   for (iplen = 1; iplen <= prefix; iplen++) {
     if (!stralloc_copyb(&buffer,ip4string->s + iplen,1)) return -1;
-    if (byte_diff(buffer.s,1,"0") != 0) 
+    if (byte_diff(buffer.s,1,'0') != 0) 
       { num += (value/2); value /= 2; }
     else 
       { value /= 2; }

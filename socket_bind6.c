@@ -17,8 +17,8 @@ int socket_bind6(int s,const char ip[16],uint16 port,uint32 scope_id)
 #endif
     int i;
     for (i=0; i<16; i++)
-      if (ip[i]!=0) break;
-    if (i==16 || ip6_isv4mapped(ip))
+      if (ip[i] != 0) break;
+    if (i == 16 || ip6_isv4mapped(ip))
       return socket_bind4(s,ip+12,port);
 #ifdef LIBC_HAS_IP6
   }

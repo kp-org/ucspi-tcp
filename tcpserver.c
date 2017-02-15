@@ -205,21 +205,39 @@ void doit(int t)
       env("TCP6INTERFACE",socket_getifname(scope_id));
   }
 
+  stripaddr=remoteipstr;
+  if (!ipv6 && byte_equal(remoteipstr,7,V4MAPPREFIX))
+    stripaddr = remoteipstr+7;
+
+  remoteportstr[fmt_ulong(remoteportstr,remoteport)] = 0;
+
   if (flagremotehost)
     if (dns_name6(&remotehostsa,remoteip) == 0)
       if (remotehostsa.len) {
-	if (flagparanoid)
-	  if (dns_ip6(&tmp,&remotehostsa) == 0)
-	    for (j = 0;j + 16 <= tmp.len;j += 16)
-	      if (byte_equal(remoteip,16,tmp.s + j)) {
-		flagparanoid = 0;
-		break;
-	      }
-	if (!flagparanoid) {
-	  if (!stralloc_0(&remotehostsa)) drop_nomem();
-	  remotehost = remotehostsa.s;
-	}
+        if (flagparanoid) {
+          if (!ipv4) {
+            if (dns_ip6(&tmp,&remotehostsa) == 0)
+              for (j = 0;j + 16 <= tmp.len;j += 16)
+                if (byte_equal(remoteip,16,tmp.s + j)) {
+                  flagparanoid = 0;
+                  break;
+                }
+          } else if (dns_ip4(&tmp,&remotehostsa) == 0) {
+              for (j = 0;j + 4 <= tmp.len;j += 4)
+                if (byte_equal(stripaddr,4,tmp.s + j)) {
+                  flagparanoid = 0;
+                  break;
+                }
+          }
+        }
+        if (!flagparanoid) {
+          if (!stralloc_0(&remotehostsa)) drop_nomem();
+            remotehost = remotehostsa.s;
+        }
       }
+
+  remoteportstr[fmt_ulong(remoteportstr,remoteport)] = 0;
+  
   env("TCPREMOTEIP",remoteipstr);
   env("TCPREMOTEPORT",remoteportstr);
   env("TCPREMOTEHOST",remotehost);
@@ -236,10 +254,6 @@ void doit(int t)
     if (!stralloc_0(&tcpremoteinfo)) drop_nomem();
   }
   env("TCPREMOTEINFO",flagremoteinfo ? tcpremoteinfo.s : 0);
-
-  stripaddr=remoteipstr;
-  if (!ipv6 && byte_equal(remoteipstr,7,V4MAPPREFIX)) 
-    stripaddr = remoteipstr+7;
 
   if (fnrules) {
     int fdrules;

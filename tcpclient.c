@@ -36,8 +36,8 @@ void usage(void)
 {
   strerr_die1x(100,"tcpclient: usage: tcpclient \
 [ -46hHrRdDqQv ] \
-[ -i localip ] \
-[ -p localport ] \
+[ -i iplocal ] \
+[ -p portlocal ] \
 [ -T timeoutconn ] \
 [ -l localname ] \
 [ -t timeoutinfo ] \
@@ -168,8 +168,8 @@ int main(int argc,char **argv)
 	  ipstr[ip4_fmt(ipstr,addresses.s + j + 12)] = 0;
 	else
 	  ipstr[ip6_compactaddr(ipstr,addresses.s + j)] = 0;
-        strerr_warn5(CONNECT,ipstr," port ",strnum,": ",&strerr_sys);
       }
+      strerr_warn5(CONNECT,ipstr," port ",strnum,": ",&strerr_sys);
     }
     if (!stralloc_copy(&addresses,&moreaddresses)) nomem();
   }

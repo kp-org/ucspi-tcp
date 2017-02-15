@@ -215,8 +215,14 @@
 20140107 (feh + John Levine)
 	thanks to the bug report of John Levine some flaws were fixed
 	which caused troubles in particular using C99 compilers.
+20150128 (feh)
+	fixed wrong nesting of warning output in case of IPv4 
+	address bind in tcpclient (-4).
+20160228 (feh)
+	redone tcpserver's remotehost evaluation for flagparanoid 
+	in case both A and AAAA records are present.
 	
 
-ucspi-tcp6 -- version: 1.00 post-beta.
+ucspi-tcp6 -- version: 1.01 post-beta.
 
 
