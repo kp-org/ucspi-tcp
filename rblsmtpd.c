@@ -22,7 +22,7 @@ void nomem(void)
 }
 void usage(void)
 {
-  strerr_die1x(100,"rblsmtpd: usage: rblsmtpd [ -b ] [ -R ] [ -t timeout ] [ -r base ] [ -a base ] smtpd [ arg ... ]");
+  strerr_die1x(100,"rblsmtpd: usage: rblsmtpd [ -b ] [ -R ] [ -t timeout ] [ -r base ] [ -a base ] [-W] [-w delay] smtpd [ arg ... ]");
 }
 
 char *ip_env;
@@ -95,9 +95,35 @@ void antirbl(char *base)
 
 char strnum[FMT_ULONG];
 static stralloc message;
+static stralloc info;
 
 char inspace[64]; buffer in = BUFFER_INIT(read,0,inspace,sizeof inspace);
 char outspace[1]; buffer out = BUFFER_INIT(write,1,outspace,sizeof outspace);
+
+void wait (unsigned long delay)
+{
+  unsigned long u;
+  char *x;
+
+  x = env_get("GREETDELAY");
+  if (x) { scan_ulong(x,&u); delay= u; }
+
+  if (!stralloc_copys(&info,"greetdelay: ")) nomem();
+
+  buffer_puts(buffer_2,"rblsmtpd: ");
+  buffer_puts(buffer_2,ip_env);
+  buffer_puts(buffer_2," pid ");
+  buffer_put(buffer_2,strnum,fmt_ulong(strnum,getpid()));
+  buffer_puts(buffer_2,": ");
+  buffer_put(buffer_2,info.s,info.len);
+  buffer_put(buffer_2,strnum,fmt_ulong(strnum,delay));
+  buffer_puts(buffer_2,"\n");
+  buffer_flush(buffer_2);
+
+  if (!stralloc_cats(&info,"\r\n")) nomem();
+
+  if (delay) sleep(delay);
+}
 
 void reject() { buffer_putflush(&out,message.s,message.len); }
 void accept() { buffer_putsflush(&out,"250 rblsmtpd.local\r\n"); }
@@ -130,7 +156,7 @@ void rblsmtpd(void)
   for (i = 0;i < message.len;++i)
     if ((message.s[i] < 32) || (message.s[i] > 126))
       message.s[i] = '?';
-  
+
   buffer_puts(buffer_2,"rblsmtpd: ");
   buffer_puts(buffer_2,ip_env);
   buffer_puts(buffer_2," pid ");
@@ -155,9 +181,9 @@ void rblsmtpd(void)
 
 main(int argc,char **argv,char **envp)
 {
-  int flagwantdefaultrbl = 1;
   char *x;
   int opt;
+  unsigned long greetdelay = 0;
 
   ip_init();
 
@@ -175,22 +201,23 @@ main(int argc,char **argv,char **envp)
     }
   }
 
-  while ((opt = getopt(argc,argv,"bBcCt:r:a:")) != opteof)
+  while ((opt = getopt(argc,argv,"bBcCWt:r:a:w:")) != opteof)
     switch(opt) {
       case 'b': flagrblbounce = 1; break;
       case 'B': flagrblbounce = 0; break;
       case 'c': flagfailclosed = 1; break;
       case 'C': flagfailclosed = 0; break;
       case 't': scan_ulong(optarg,&timeout); break;
-      case 'r': rbl(optarg); flagwantdefaultrbl = 0; break;
+      case 'r': rbl(optarg); break;
       case 'a': antirbl(optarg); break;
+      case 'W': wait(greetdelay); break;
+      case 'w': scan_ulong(optarg,&greetdelay); wait(greetdelay); break;
       default: usage();
     }
 
   argv += optind;
   if (!*argv) usage();
 
-  if (flagwantdefaultrbl) rbl("rbl.maps.vix.com");
   if (decision >= 2) rblsmtpd();
 
   pathexec_run(*argv,argv,envp);

@@ -37,8 +37,8 @@ compile auto-str.c buffer.h readwrite.h exit.h
 	./compile auto-str.c
 
 auto_home.c: \
-auto-str conf-home
-	./auto-str auto_home `head -1 conf-home` > auto_home.c
+auto-str home
+	./auto-str auto_home `head -1 home` > auto_home.c
 
 auto_home.o: \
 compile auto_home.c
@@ -76,12 +76,14 @@ byte.a: \
 makelib byte_chr.o byte_copy.o byte_cr.o byte_diff.o byte_rchr.o \
 byte_zero.o case_diffb.o case_diffs.o fmt_ulong.o ip4_fmt.o \
 ip4_scan.o scan_ulong.o str_chr.o str_diff.o str_len.o str_start.o \
-uint16_pack.o uint16_unpack.o uint32_pack.o uint32_unpack.o
+uint16_pack.o uint16_unpack.o uint32_pack.o uint32_unpack.o \
+ip6_compactaddr.o ip6_expandaddr.o ip6_scan.o scan_xlong.o fmt_xlong.o hexconversion.o
 	./makelib byte.a byte_chr.o byte_copy.o byte_cr.o \
 	byte_diff.o byte_rchr.o byte_zero.o case_diffb.o \
 	case_diffs.o fmt_ulong.o ip4_fmt.o ip4_scan.o scan_ulong.o \
 	str_chr.o str_diff.o str_len.o str_start.o uint16_pack.o \
-	uint16_unpack.o uint32_pack.o uint32_unpack.o
+	uint16_unpack.o uint32_pack.o uint32_unpack.o ip6_compactaddr.o \
+	ip6_expandaddr.o ip6_scan.o scan_xlong.o fmt_xlong.o hexconversion.o
 
 byte_chr.o: \
 compile byte_chr.c byte.h
@@ -132,10 +134,6 @@ compile cdb_make.c readwrite.h seek.h error.h alloc.h cdb.h uint32.h \
 cdb_make.h buffer.h uint32.h
 	./compile cdb_make.c
 
-check: \
-it instcheck
-	./instcheck
-
 chkshsgr: \
 load chkshsgr.o
 	./load chkshsgr 
@@ -145,9 +143,10 @@ compile chkshsgr.c exit.h
 	./compile chkshsgr.c
 
 choose: \
-warn-auto.sh choose.sh conf-home
+home warn-auto.sh choose.sh 
+	rm -f choose
 	cat warn-auto.sh choose.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
+	| sed s}HOME}"`head -1 home`"}g \
 	> choose
 	chmod 755 choose
 
@@ -164,9 +163,10 @@ warn-auto.sh conf-cc
 	chmod 755 compile
 
 date@: \
-warn-auto.sh date@.sh conf-home
+home warn-auto.sh date@.sh 
+	rm -f date@
 	cat warn-auto.sh date@.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
+	| sed s}HOME}"`head -1 home`"}g \
 	> date@
 	chmod 755 date@
 
@@ -181,11 +181,13 @@ compile delcr.c buffer.h exit.h
 dns.a: \
 makelib dns_dfd.o dns_domain.o dns_dtda.o dns_ip.o dns_ipq.o \
 dns_name.o dns_nd.o dns_packet.o dns_random.o dns_rcip.o dns_rcrw.o \
-dns_resolve.o dns_sortip.o dns_transmit.o dns_txt.o
+dns_resolve.o dns_sortip.o dns_transmit.o dns_txt.o dns_ip6.o \
+dns_sortip6.o dns_nd6.o dns_ipq6.o
 	./makelib dns.a dns_dfd.o dns_domain.o dns_dtda.o dns_ip.o \
 	dns_ipq.o dns_name.o dns_nd.o dns_packet.o dns_random.o \
 	dns_rcip.o dns_rcrw.o dns_resolve.o dns_sortip.o \
-	dns_transmit.o dns_txt.o
+	dns_transmit.o dns_txt.o dns_ip6.o dns_sortip6.o dns_nd6.o \
+	dns_ipq6.o
 
 dns_dfd.o: \
 compile dns_dfd.c error.h alloc.h byte.h dns.h stralloc.h gen_alloc.h \
@@ -257,7 +259,7 @@ taia.h tai.h uint64.h taia.h
 dns_transmit.o: \
 compile dns_transmit.c socket.h uint16.h alloc.h error.h byte.h \
 readwrite.h uint16.h dns.h stralloc.h gen_alloc.h iopause.h taia.h \
-tai.h uint64.h taia.h
+tai.h uint64.h taia.h uint32.h
 	./compile dns_transmit.c
 
 dns_txt.o: \
@@ -286,9 +288,10 @@ compile fd_move.c fd.h
 	./compile fd_move.c
 
 finger@: \
-warn-auto.sh finger@.sh conf-home
+home warn-auto.sh finger@.sh 
+	rm -f finger@
 	cat warn-auto.sh finger@.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
+	| sed s}HOME}"`head -1 home`"}g \
 	> finger@
 	chmod 755 finger@
 
@@ -335,32 +338,14 @@ haswaitp.h: \
 choose compile load trywaitp.c haswaitp.h1 haswaitp.h2
 	./choose cl trywaitp haswaitp.h1 haswaitp.h2 > haswaitp.h
 
-hier.o: \
-compile hier.c auto_home.h
-	./compile hier.c
 
 http@: \
-warn-auto.sh http@.sh conf-home
+home warn-auto.sh http@.sh 
+	rm -f http@
 	cat warn-auto.sh http@.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
+	| sed s}HOME}"`head -1 home`"}g \
 	> http@
 	chmod 755 http@
-
-install: \
-load install.o hier.o auto_home.o unix.a byte.a
-	./load install hier.o auto_home.o unix.a byte.a 
-
-install.o: \
-compile install.c buffer.h strerr.h error.h open.h readwrite.h exit.h
-	./compile install.c
-
-instcheck: \
-load instcheck.o hier.o auto_home.o unix.a byte.a
-	./load instcheck hier.o auto_home.o unix.a byte.a 
-
-instcheck.o: \
-compile instcheck.c strerr.h error.h readwrite.h exit.h
-	./compile instcheck.c
 
 iopause.h: \
 choose compile trypoll.c iopause.h1 iopause.h2
@@ -370,6 +355,10 @@ iopause.o: \
 compile iopause.c taia.h tai.h uint64.h select.h iopause.h taia.h
 	./compile iopause.c
 
+ip4_bit.o: \
+compile ip4_bit.c ip4_bit.h strerr.h ip4.h byte.h
+	./compile ip4_bit.c
+
 ip4_fmt.o: \
 compile ip4_fmt.c fmt.h ip4.h
 	./compile ip4_fmt.c
@@ -377,9 +366,14 @@ compile ip4_fmt.c fmt.h ip4.h
 ip4_scan.o: \
 compile ip4_scan.c scan.h ip4.h
 	./compile ip4_scan.c
+  
+it: it-base sysdeps
 
-it: \
-prog install instcheck
+it-base: \
+tcpserver tcprules tcprulescheck argv0 recordio tcpclient who@ date@ \
+finger@ http@ tcpcat mconnect mconnect-io addcr delcr fixcrio rblsmtpd \
+sysdeps
+
 
 load: \
 warn-auto.sh conf-ld
@@ -410,9 +404,10 @@ warn-auto.sh systype
 	chmod 755 makelib
 
 mconnect: \
-warn-auto.sh mconnect.sh conf-home
+home warn-auto.sh mconnect.sh
+	rm -f mconnect
 	cat warn-auto.sh mconnect.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
+	| sed s}HOME}"`head -1 home`"}g \
 	> mconnect
 	chmod 755 mconnect
 
@@ -460,11 +455,6 @@ compile pathexec_run.c error.h stralloc.h gen_alloc.h str.h env.h \
 pathexec.h
 	./compile pathexec_run.c
 
-prog: \
-tcpserver tcprules tcprulescheck argv0 recordio tcpclient who@ date@ \
-finger@ http@ tcpcat mconnect mconnect-io addcr delcr fixcrio \
-rblsmtpd rts
-
 prot.o: \
 compile prot.c hasshsgr.h prot.h
 	./compile prot.c
@@ -498,19 +488,18 @@ exit.h fmt.h iopause.h taia.h tai.h uint64.h pathexec.h
 remoteinfo.o: \
 compile remoteinfo.c fmt.h buffer.h socket.h uint16.h error.h \
 iopause.h taia.h tai.h uint64.h timeoutconn.h uint16.h remoteinfo.h \
-stralloc.h gen_alloc.h uint16.h
+stralloc.h gen_alloc.h uint16.h uint32.h
 	./compile remoteinfo.c
 
-rts: \
-warn-auto.sh rts.sh conf-home
-	cat warn-auto.sh rts.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
-	> rts
-	chmod 755 rts
+remoteinfo6.o: \
+compile remoteinfo6.c fmt.h buffer.h socket.h uint16.h error.h \
+iopause.h taia.h tai.h uint64.h timeoutconn.h uint16.h remoteinfo.h \
+stralloc.h gen_alloc.h uint16.h uint32.h
+	./compile remoteinfo6.c
 
 rules.o: \
-compile rules.c alloc.h stralloc.h gen_alloc.h open.h cdb.h uint32.h \
-rules.h stralloc.h
+compile rules.c alloc.h stralloc.h gen_alloc.h open.h cdb.h uint32.h byte.h strerr.h \
+fmt.h getln.h rules.h stralloc.h ip4_bit.h ip6.h
 	./compile rules.c
 
 scan_ulong.o: \
@@ -524,10 +513,6 @@ compile seek_set.c seek.h
 select.h: \
 choose compile trysysel.c select.h1 select.h2
 	./choose c trysysel select.h1 select.h2 > select.h
-
-setup: \
-it install
-	./install
 
 sgetopt.o: \
 compile sgetopt.c buffer.h sgetopt.h subgetopt.h subgetopt.h
@@ -557,43 +542,47 @@ trylsock.c compile load
 	rm -f trylsock.o trylsock
 
 socket_accept.o: \
-compile socket_accept.c byte.h socket.h uint16.h
+compile socket_accept.c byte.h socket.h uint16.h uint32.h
 	./compile socket_accept.c
 
 socket_bind.o: \
-compile socket_bind.c byte.h socket.h uint16.h
+compile socket_bind.c byte.h socket.h uint16.h uint32.h
 	./compile socket_bind.c
 
 socket_conn.o: \
-compile socket_conn.c readwrite.h byte.h socket.h uint16.h
+compile socket_conn.c readwrite.h byte.h socket.h uint16.h uint32.h
 	./compile socket_conn.c
 
 socket_delay.o: \
-compile socket_delay.c socket.h uint16.h
+compile socket_delay.c socket.h uint16.h uint32.h
 	./compile socket_delay.c
 
 socket_listen.o: \
-compile socket_listen.c socket.h uint16.h
+compile socket_listen.c socket.h uint16.h uint32.h
 	./compile socket_listen.c
 
 socket_local.o: \
-compile socket_local.c byte.h socket.h uint16.h
+compile socket_local.c byte.h socket.h uint16.h uint32.h
 	./compile socket_local.c
 
 socket_opts.o: \
-compile socket_opts.c socket.h uint16.h
+compile socket_opts.c socket.h uint16.h uint32.h
 	./compile socket_opts.c
 
+socket_opts6.o: \
+compile socket_opts6.c socket.h uint16.h uint32.h
+	./compile socket_opts6.c
+
 socket_remote.o: \
-compile socket_remote.c byte.h socket.h uint16.h
+compile socket_remote.c byte.h socket.h uint16.h uint32.h
 	./compile socket_remote.c
 
 socket_tcp.o: \
-compile socket_tcp.c ndelay.h socket.h uint16.h
+compile socket_tcp.c ndelay.h socket.h uint16.h uint32.h
 	./compile socket_tcp.c
 
 socket_udp.o: \
-compile socket_udp.c ndelay.h socket.h uint16.h
+compile socket_udp.c ndelay.h socket.h uint16.h uint32.h
 	./compile socket_udp.c
 
 str_chr.o: \
@@ -658,6 +647,18 @@ subgetopt.o: \
 compile subgetopt.c subgetopt.h
 	./compile subgetopt.c
 
+sysdeps: systype compile load hassgact.h hassgprm.h hasshsgr.h \
+haswaitp.h iopause.h select.h uint64.h
+	rm -f sysdeps
+	cat systype compile load >> sysdeps
+	grep sysdep haswaitp.h >> sysdeps
+	grep sysdep hassgact.h >> sysdeps
+	grep sysdep hassgprm.h >> sysdeps
+	grep sysdep hasshsgr.h >> sysdeps
+	grep sysdep select.h >> sysdeps
+	grep sysdep uint64.h >> sysdeps
+	grep sysdep iopause.h >> sysdeps
+
 systype: \
 find-systype.sh conf-cc conf-ld trycpp.c x86cpuid.c
 	( cat warn-auto.sh; \
@@ -703,16 +704,17 @@ compile taia_uint.c taia.h tai.h uint64.h
 	./compile taia_uint.c
 
 tcpcat: \
-warn-auto.sh tcpcat.sh conf-home
+home warn-auto.sh tcpcat.sh home
+	rm -f tcpcat
 	cat warn-auto.sh tcpcat.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
+	| sed s}HOME}"`head -1 home`"}g \
 	> tcpcat
 	chmod 755 tcpcat
 
 tcpclient: \
-load tcpclient.o remoteinfo.o timeoutconn.o dns.a time.a unix.a \
-byte.a socket.lib
-	./load tcpclient remoteinfo.o timeoutconn.o dns.a time.a \
+load tcpclient.o remoteinfo6.o dns.a time.a unix.a \
+byte.a socket.lib byte.h timeoutconn6.o
+	./load tcpclient remoteinfo6.o timeoutconn6.o dns.a time.a \
 	unix.a byte.a  `cat socket.lib`
 
 tcpclient.o: \
@@ -720,7 +722,7 @@ compile tcpclient.c sig.h exit.h sgetopt.h subgetopt.h uint16.h fmt.h \
 scan.h str.h ip4.h uint16.h socket.h uint16.h fd.h stralloc.h \
 gen_alloc.h buffer.h error.h strerr.h pathexec.h timeoutconn.h \
 uint16.h remoteinfo.h stralloc.h uint16.h dns.h stralloc.h iopause.h \
-taia.h tai.h uint64.h taia.h
+taia.h tai.h uint64.h taia.h uint32.h
 	./compile tcpclient.c
 
 tcprules: \
@@ -729,7 +731,7 @@ load tcprules.o cdb.a unix.a byte.a
 
 tcprules.o: \
 compile tcprules.c strerr.h stralloc.h gen_alloc.h getln.h buffer.h \
-stralloc.h buffer.h exit.h fmt.h byte.h cdb_make.h buffer.h uint32.h
+stralloc.h buffer.h exit.h fmt.h byte.h cdb_make.h buffer.h uint32.h ip4_bit.h ip6.h
 	./compile tcprules.c
 
 tcprulescheck: \
@@ -737,14 +739,14 @@ load tcprulescheck.o rules.o cdb.a unix.a byte.a
 	./load tcprulescheck rules.o cdb.a unix.a byte.a 
 
 tcprulescheck.o: \
-compile tcprulescheck.c byte.h buffer.h strerr.h env.h rules.h \
+compile tcprulescheck.c byte.h buffer.h strerr.h env.h rules.h ip4_bit.h ip6.h \
 stralloc.h gen_alloc.h
 	./compile tcprulescheck.c
 
 tcpserver: \
-load tcpserver.o rules.o remoteinfo.o timeoutconn.o cdb.a dns.a \
+load tcpserver.o rules.o remoteinfo6.o timeoutconn6.o cdb.a dns.a \
 time.a unix.a byte.a socket.lib
-	./load tcpserver rules.o remoteinfo.o timeoutconn.o cdb.a \
+	./load tcpserver rules.o remoteinfo6.o timeoutconn6.o cdb.a \
 	dns.a time.a unix.a byte.a  `cat socket.lib`
 
 tcpserver.o: \
@@ -753,7 +755,7 @@ exit.h env.h prot.h open.h wait.h readwrite.h stralloc.h gen_alloc.h \
 alloc.h buffer.h error.h strerr.h sgetopt.h subgetopt.h pathexec.h \
 socket.h uint16.h ndelay.h remoteinfo.h stralloc.h uint16.h rules.h \
 stralloc.h sig.h dns.h stralloc.h iopause.h taia.h tai.h uint64.h \
-taia.h
+taia.h uint32.h
 	./compile tcpserver.c
 
 time.a: \
@@ -765,8 +767,13 @@ taia_less.o taia_now.o taia_pack.o taia_sub.o taia_uint.o
 
 timeoutconn.o: \
 compile timeoutconn.c ndelay.h socket.h uint16.h iopause.h taia.h \
-tai.h uint64.h error.h timeoutconn.h uint16.h
+tai.h uint64.h error.h timeoutconn.h uint16.h uint32.h
 	./compile timeoutconn.c
+
+timeoutconn6.o: \
+compile timeoutconn6.c ndelay.h socket.h uint16.h iopause.h taia.h \
+tai.h uint64.h error.h timeoutconn.h uint16.h uint32.h
+	./compile timeoutconn6.c
 
 uint16_pack.o: \
 compile uint16_pack.c uint16.h
@@ -806,7 +813,13 @@ socket_conn.o socket_delay.o socket_listen.o socket_local.o \
 socket_opts.o socket_remote.o socket_tcp.o socket_udp.o \
 stralloc_cat.o stralloc_catb.o stralloc_cats.o stralloc_copy.o \
 stralloc_eady.o stralloc_opyb.o stralloc_opys.o stralloc_pend.o \
-strerr_die.o strerr_sys.o subgetopt.o wait_nohang.o wait_pid.o
+strerr_die.o strerr_sys.o subgetopt.o wait_nohang.o wait_pid.o \
+ip4_bit.o ip6_bit.o hexconversion.o \
+socket_conn6.o socket_bind6.o socket_accept6.o socket_recv6.o \
+socket_send6.o socket_local6.o socket_remote6.o socket_tcp6.o \
+socket_getifname.o socket_getifidx.o socket_v4mappedprefix.o \
+socket_ip4loopback.o socket_v6any.o socket_v6loopback.o \
+socket_udp6.o socket_opts6.o
 	./makelib unix.a alloc.o alloc_re.o buffer.o buffer_0.o \
 	buffer_1.o buffer_2.o buffer_copy.o buffer_get.o \
 	buffer_put.o env.o error.o error_str.o fd_copy.o fd_move.o \
@@ -819,7 +832,13 @@ strerr_die.o strerr_sys.o subgetopt.o wait_nohang.o wait_pid.o
 	socket_udp.o stralloc_cat.o stralloc_catb.o stralloc_cats.o \
 	stralloc_copy.o stralloc_eady.o stralloc_opyb.o \
 	stralloc_opys.o stralloc_pend.o strerr_die.o strerr_sys.o \
-	subgetopt.o wait_nohang.o wait_pid.o
+	subgetopt.o wait_nohang.o wait_pid.o socket_conn6.o \
+	ip4_bit.o ip6_bit.o hexconversion.o \
+	socket_bind6.o socket_accept6.o socket_recv6.o socket_send6.o \
+	socket_local6.o socket_remote6.o socket_tcp6.o \
+	socket_getifname.o socket_getifidx.o socket_v4mappedprefix.o \
+	socket_ip4loopback.o socket_v6any.o socket_v6loopback.o \
+	socket_udp6.o socket_opts6.o
 
 wait_nohang.o: \
 compile wait_nohang.c haswaitp.h
@@ -830,8 +849,126 @@ compile wait_pid.c error.h haswaitp.h
 	./compile wait_pid.c
 
 who@: \
-warn-auto.sh who@.sh conf-home
+home warn-auto.sh who@.sh 
+	rm -f who@
 	cat warn-auto.sh who@.sh \
-	| sed s}HOME}"`head -1 conf-home`"}g \
+	| sed s}HOME}"`head -1 home`"}g \
 	> who@
 	chmod 755 who@
+
+socket_conn6.o: \
+compile socket_conn6.c socket.h uint16.h haveip6.h error.h ip6.h \
+uint32.h
+	./compile socket_conn6.c
+
+socket_bind6.o: \
+compile socket_bind6.c socket.h uint16.h haveip6.h error.h ip6.h \
+uint32.h
+	./compile socket_bind6.c
+
+socket_accept6.o: \
+compile socket_accept6.c socket.h uint16.h haveip6.h error.h ip6.h \
+uint32.h
+	./compile socket_accept6.c
+
+socket_recv6.o: \
+compile socket_recv6.c socket.h uint16.h haveip6.h error.h ip6.h \
+uint32.h
+	./compile socket_recv6.c
+
+socket_send6.o: \
+compile socket_send6.c socket.h uint16.h haveip6.h error.h uint32.h
+	./compile socket_send6.c
+
+socket_local6.o: \
+compile socket_local6.c socket.h uint16.h haveip6.h error.h uint32.h
+	./compile socket_local6.c
+
+socket_remote6.o: \
+compile socket_remote6.c socket.h uint16.h haveip6.h error.h uint32.h
+	./compile socket_remote6.c
+
+dns_sortip6.o: \
+compile dns_sortip6.c byte.h dns.h stralloc.h gen_alloc.h iopause.h \
+taia.h tai.h uint64.h taia.h
+	./compile dns_sortip6.c
+
+dns_nd6.o: \
+compile dns_nd6.c byte.h fmt.h dns.h stralloc.h gen_alloc.h iopause.h \
+taia.h tai.h uint64.h taia.h 
+	./compile dns_nd6.c
+
+dns_ipq6.o: \
+compile dns_ipq6.c stralloc.h gen_alloc.h case.h byte.h str.h dns.h \
+stralloc.h iopause.h taia.h tai.h uint64.h taia.h ip6.h
+	./compile dns_ipq6.c
+
+dns_ip6.o: \
+compile dns_ip6.c stralloc.h gen_alloc.h uint16.h byte.h dns.h \
+stralloc.h iopause.h taia.h tai.h uint64.h taia.h
+	./compile dns_ip6.c
+
+fmt_xlong.o: \
+compile fmt_xlong.c scan.h hexconversion.h
+	./compile fmt_xlong.c
+
+hexconversion.o: \
+compile hexconversion.c hexconversion.h
+	./compile hexconversion.c
+
+ip6_compactaddr.o: \
+compile ip6_compactaddr.c fmt.h ip6.h 
+	./compile ip6_compactaddr.c
+
+ip6_expandaddr.o: \
+compile ip6_expandaddr.c ip6.h stralloc.h
+	./compile ip6_expandaddr.c
+
+ip6_scan.o: \
+compile ip6_scan.c scan.h ip6.h hexconversion.h
+	./compile ip6_scan.c
+	
+ip6_bit.o: \
+compile ip6_bit.c ip6.h strerr.h ip6.h byte.h str.h fmt.h hexconversion.h
+	./compile ip6_bit.c
+
+scan_xlong.o: \
+compile scan_xlong.c scan.h
+	./compile scan_xlong.c
+
+socket_tcp6.o: \
+compile socket_tcp6.c ndelay.h socket.h uint16.h haveip6.h uint32.h
+	./compile socket_tcp6.c
+
+socket_udp6.o: \
+compile socket_udp6.c ndelay.h socket.h uint16.h haveip6.h uint32.h
+	./compile socket_udp6.c
+
+haveip6.h: \
+tryip6.c choose compile haveip6.h1 haveip6.h2
+	./choose c tryip6 haveip6.h1 haveip6.h2 > haveip6.h
+
+socket_getifname.o: \
+compile socket_getifname.c socket.h uint16.h uint32.h
+	./compile socket_getifname.c
+
+socket_getifidx.o: \
+compile socket_getifidx.c socket.h uint16.h uint32.h
+	./compile socket_getifidx.c
+
+socket_ip4loopback.o: \
+compile socket_ip4loopback.c
+	./compile socket_ip4loopback.c
+
+socket_v4mappedprefix.o: \
+compile socket_v4mappedprefix.c
+	./compile socket_v4mappedprefix.c
+
+socket_v6any.o: \
+compile socket_v6any.c
+	./compile socket_v6any.c
+
+socket_v6loopback.o: \
+compile socket_v6loopback.c
+	./compile socket_v6loopback.c
+
