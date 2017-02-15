@@ -9,6 +9,7 @@ int timeoutconn(int s,char ip[4],uint16 port,unsigned int timeout)
   struct taia now;
   struct taia deadline;
   iopause_fd x;
+  int riop;
 
   if (socket_connect4(s,ip,port) == -1) {
     if ((errno != error_wouldblock) && (errno != error_inprogress)) return -1;
@@ -19,7 +20,8 @@ int timeoutconn(int s,char ip[4],uint16 port,unsigned int timeout)
     taia_add(&deadline,&now,&deadline);
     for (;;) {
       taia_now(&now);
-      iopause(&x,1,&deadline,&now);
+      riop = iopause(&x,1,&deadline,&now);
+      if (iop <= 0) break;
       if (x.revents) break;
       if (taia_less(&deadline,&now)) {
 	errno = error_timeout; /* note that connect attempt is continuing */

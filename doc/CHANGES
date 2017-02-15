@@ -162,7 +162,7 @@
 	added IPv6 CIDR and compactified IPv6 address
 		parser from Le Minh Bui.
 	changed UDP DNS message buffer from 512 to 1024 byte. 
-	re-packaged to comply wit DJB's 'package' format.
+	re-packaged to comply with DJB's 'package' format.
 	added man-pages and docs.
 20120826 (feh)
 	updated package/rts tests.
@@ -222,11 +222,11 @@
 	redone tcpserver's remotehost evaluation for flagparanoid 
 	in case both A and AAAA records are present.
 20160726 (feh)
-	included compiler and ip4_bit segfault fixes from troy@shun.org (tx!)
 	conf-* files are now in main dir.
+20161120 (feh)
+	fix output for localip output in case of mappedv4.
+	fix for poll + select handling in iopause.c (tx frank bergmann).
 
-	
-
-ucspi-tcp6 -- version: 1.02. post-beta.
+ucspi-tcp6 -- version: 1.0 post-beta.
 
 

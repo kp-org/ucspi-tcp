@@ -10,15 +10,17 @@
 static struct taia now;
 static struct taia deadline;
 
-static ssize_t mywrite(int fd,char *buf,int len)
+static int mywrite(int fd,char *buf,int len)
 {
   iopause_fd x;
+  int riop;
 
   x.fd = fd;
   x.events = IOPAUSE_WRITE;
   for (;;) {
     taia_now(&now);
-    iopause(&x,1,&deadline,&now);
+    riop = iopause(&x,1,&deadline,&now);
+    if (riop <= 0) break;
     if (x.revents) break;
     if (taia_less(&deadline,&now)) {
       errno = error_timeout;
@@ -28,15 +30,17 @@ static ssize_t mywrite(int fd,char *buf,int len)
   return write(fd,buf,len);
 }
 
-static ssize_t myread(int fd,char *buf,int len)
+static int myread(int fd,char *buf,int len)
 {
   iopause_fd x;
+  int riop;
 
   x.fd = fd;
   x.events = IOPAUSE_READ;
   for (;;) {
     taia_now(&now);
-    iopause(&x,1,&deadline,&now);
+    riop iopause(&x,1,&deadline,&now);
+    if (riop <= 0) break;
     if (x.revents) break;
     if (taia_less(&deadline,&now)) {
       errno = error_timeout;
@@ -57,14 +61,14 @@ static int doit(stralloc *out,int s,char ipremote[4],uint16 portremote,char iplo
   if (socket_bind4(s,iplocal,0) == -1) return -1;
   if (timeoutconn(s,ipremote,113,timeout) == -1) return -1;
 
-  buffer_init(&b,mywrite,s,bspace,sizeof bspace);
+  buffer_init(&b,(int (*)())mywrite,s,bspace,sizeof bspace);
   buffer_put(&b,strnum,fmt_ulong(strnum,portremote));
   buffer_put(&b," , ",3);
   buffer_put(&b,strnum,fmt_ulong(strnum,portlocal));
   buffer_put(&b,"\r\n",2);
   if (buffer_flush(&b) == -1) return -1;
 
-  buffer_init(&b,myread,s,bspace,sizeof bspace);
+  buffer_init(&b,(int (*)())myread,s,bspace,sizeof bspace);
   numcolons = 0;
   for (;;) {
     if (buffer_get(&b,&ch,1) != 1) return -1;

@@ -180,7 +180,6 @@ void doit(int t)
     localipstr[ip4_fmt(localipstr,&localip[12])] = 0;
   else
     localipstr[ip6_compactaddr(localipstr,localip)] = 0;
-  remoteportstr[fmt_ulong(remoteportstr,remoteport)] = 0;
 
   if (!localhost)
     if (dns_name6(&localhostsa,localip) == 0)
@@ -188,13 +187,9 @@ void doit(int t)
 	if (!stralloc_0(&localhostsa)) drop_nomem();
 	localhost = localhostsa.s;
       }
+
   env("PROTO",mappedv4 ? "TCP":"TCP6");
   env("TCPLOCALIP",localipstr);
-  if (!ipv4) {
-    localipstr[ip6_compactaddr(localipstr,localip)] = 0;
-    env("TCPLOCALIP",localipstr);
-  }
-
   env("TCPLOCALPORT",localportstr);
   env("TCPLOCALHOST",localhost);
   if (!mappedv4) {
@@ -205,7 +200,7 @@ void doit(int t)
       env("TCP6INTERFACE",socket_getifname(scope_id));
   }
 
-  stripaddr=remoteipstr;
+  stripaddr = remoteipstr;
   if (!ipv6 && byte_equal(remoteipstr,7,V4MAPPREFIX))
     stripaddr = remoteipstr+7;
 
@@ -274,7 +269,11 @@ void doit(int t)
     safecats(flagdeny ? "deny" : "ok");
     cats(" "); safecats(strnum);
     cats(" "); if (localhost) safecats(localhost);
-    cats(":"); safecats(localipstr);
+    cats(":"); 
+    if (byte_equal(localipstr,7,V4MAPPREFIX)) 
+      safecats(localipstr + 7);
+    else 
+      safecats(localipstr);
     cats(":"); safecats(localportstr);
     cats(" "); if (remotehost) safecats(remotehost);
     cats(":"); safecats(stripaddr);
@@ -452,6 +451,9 @@ int main(int argc,char **argv)
   localportstr[fmt_ulong(localportstr,localport)] = 0;
   if (flag1) {
     buffer_init(&b,write,1,bspace,sizeof bspace);
+    if (byte_equal(localipstr,7,V4MAPPREFIX)) 
+      buffer_puts(&b,localipstr + 7);
+    else
     buffer_puts(&b,localipstr);
     buffer_puts(&b," : ");
     buffer_puts(&b,localportstr);

@@ -60,7 +60,7 @@ void doit(int fdleft,int fdright) /* copy 0 -> fdleft, copy fdright -> 1 */
   iopause_fd *ioleft;
   iopause_fd *io1;
   iopause_fd *ioright;
-  int r;
+  int r, riop;
 
   for (;;) {
     xlen = 0;
@@ -94,9 +94,9 @@ void doit(int fdleft,int fdright) /* copy 0 -> fdleft, copy fdright -> 1 */
     taia_now(&stamp);
     taia_uint(&deadline,3600);
     taia_add(&deadline,&stamp,&deadline);
-    iopause(x,xlen,&deadline,&stamp);
+    riop = iopause(x,xlen,&deadline,&stamp);
 
-    if (io0 && io0->revents) {
+    if (riop > 0 && io0 && io0->revents) {
       r = read(0,leftbuf,sizeof leftbuf);
       if (r <= 0) {
         leftstatus = -1;

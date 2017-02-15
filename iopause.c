@@ -2,12 +2,12 @@
 #include "select.h"
 #include "iopause.h"
 
-void iopause(iopause_fd *x,unsigned int len,struct taia *deadline,struct taia *stamp)
+int iopause(iopause_fd *x,unsigned int len,struct taia *deadline,struct taia *stamp)
 {
   struct taia t;
   int millisecs;
   double d;
-  int i;
+  int i, r;
 
   if (taia_less(deadline,stamp))
     millisecs = 0;
@@ -24,7 +24,9 @@ void iopause(iopause_fd *x,unsigned int len,struct taia *deadline,struct taia *s
 
 #ifdef IOPAUSE_POLL
 
-  poll(x,len,millisecs);
+  r = poll(x,len,millisecs);
+  /* The poll() system call returns the number of descriptors that are ready */
+  /*  for I/O, or -1 if an error occurred.  If the time limit expires, poll() returns 0. */ 
   /* XXX: some kernels apparently need x[0] even if len is 0 */
   /* XXX: how to handle EAGAIN? are kernels really this dumb? */
   /* XXX: how to handle EINVAL? when exactly can this happen? */
@@ -55,9 +57,8 @@ void iopause(iopause_fd *x,unsigned int len,struct taia *deadline,struct taia *s
   tv.tv_sec = millisecs / 1000;
   tv.tv_usec = 1000 * (millisecs % 1000);
 
-  if (select(nfds,&rfds,&wfds,(fd_set *) 0,&tv) <= 0)
-    return;
-    /* XXX: for EBADF, could seek out and destroy the bad descriptor */
+  if (r = select(nfds,&rfds,&wfds,(fd_set *) 0,&tv) <= 0) return r;
+  /* XXX: for EBADF, could seek out and destroy the bad descriptor */
 
   for (i = 0;i < len;++i) {
     fd = x[i].fd;
@@ -73,4 +74,5 @@ void iopause(iopause_fd *x,unsigned int len,struct taia *deadline,struct taia *s
 }
 #endif
 
+  return r;
 }
