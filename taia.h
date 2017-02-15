@@ -19,7 +19,7 @@ extern double taia_frac(struct taia *);
 extern void taia_add(struct taia *,struct taia *,struct taia *);
 extern void taia_sub(struct taia *,struct taia *,struct taia *);
 extern void taia_half(struct taia *,struct taia *);
-extern int taia_less(struct taia *,struct taia *);
+extern int taia_less(const struct taia *,struct taia *);
 
 #define TAIA_PACK 16
 extern void taia_pack(char *,struct taia *);

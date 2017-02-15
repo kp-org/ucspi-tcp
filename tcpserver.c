@@ -168,7 +168,7 @@ void doit(int t)
     socket_tcpnodelay(t);
 
   if (*banner) {
-    buffer_init(&b,(int (*)())write,t,bspace,sizeof bspace);
+    buffer_init(&b,write,t,bspace,sizeof bspace);
     if (buffer_putsflush(&b,banner) == -1)
       strerr_die2sys(111,DROP,"unable to print banner: ");
   }
@@ -188,7 +188,7 @@ void doit(int t)
 	if (!stralloc_0(&localhostsa)) drop_nomem();
 	localhost = localhostsa.s;
       }
-  env("PROTO",mappedv4?"TCP":"TCP6");
+  env("PROTO",mappedv4 ? "TCP":"TCP6");
   env("TCPLOCALIP",localipstr);
   if (!ipv4) {
     localipstr[ip6_compactaddr(localipstr,localip)] = 0;
@@ -238,7 +238,7 @@ void doit(int t)
 
   remoteportstr[fmt_ulong(remoteportstr,remoteport)] = 0;
   
-  env("TCPREMOTEIP",remoteipstr);
+  env("TCPREMOTEIP",stripaddr);
   env("TCPREMOTEPORT",remoteportstr);
   env("TCPREMOTEHOST",remotehost);
   if (!ipv4) {
@@ -451,7 +451,7 @@ int main(int argc,char **argv)
   localipstr[ip6_compactaddr(localipstr,localip)]= 0;
   localportstr[fmt_ulong(localportstr,localport)] = 0;
   if (flag1) {
-    buffer_init(&b,(int (*)())write,1,bspace,sizeof bspace);
+    buffer_init(&b,write,1,bspace,sizeof bspace);
     buffer_puts(&b,localipstr);
     buffer_puts(&b," : ");
     buffer_puts(&b,localportstr);

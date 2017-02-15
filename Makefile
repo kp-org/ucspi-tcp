@@ -1,4 +1,4 @@
-# Don't edit Makefile! Use conf-* for configuration.
+# Don't edit Makefile! Use ../conf-* for configuration.
 
 SHELL=/bin/sh
 
@@ -149,9 +149,9 @@ stralloc.h
 	./compile commands.c
 
 compile: \
-warn-auto.sh conf-cc
+warn-auto.sh ../conf-cc
 	( cat warn-auto.sh; \
-	echo exec "`head -1 conf-cc`" '-c $${1+"$$@"}' \
+	echo exec "`head -1 ../conf-cc`" '-c $${1+"$$@"}' \
 	) > compile
 	chmod 755 compile
 
@@ -409,10 +409,10 @@ finger@ http@ tcpcat mconnect mconnect-io addcr delcr fixcrio rblsmtpd \
 sysdeps
 
 load: \
-warn-auto.sh conf-ld
+warn-auto.sh ../conf-ld
 	( cat warn-auto.sh; \
 	echo 'main="$$1"; shift'; \
-	echo exec "`head -1 conf-ld`" \
+	echo exec "`head -1 ../conf-ld`" \
 	'-o "$$main" "$$main".o $${1+"$$@"}' \
 	) > load
 	chmod 755 load
@@ -755,10 +755,10 @@ haswaitp.h iopause.h select.h uint64.h
 	grep sysdep iopause.h >> sysdeps
 
 systype: \
-find-systype.sh conf-cc conf-ld trycpp.c x86cpuid.c
+find-systype.sh ../conf-cc ../conf-ld trycpp.c x86cpuid.c
 	( cat warn-auto.sh; \
-	echo CC=\'`head -1 conf-cc`\'; \
-	echo LD=\'`head -1 conf-ld`\'; \
+	echo CC=\'`head -1 ../conf-cc`\'; \
+	echo LD=\'`head -1 ../conf-ld`\'; \
 	cat find-systype.sh; \
 	) | sh > systype
 

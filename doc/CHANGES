@@ -221,8 +221,12 @@
 20160228 (feh)
 	redone tcpserver's remotehost evaluation for flagparanoid 
 	in case both A and AAAA records are present.
+20160726 (feh)
+	included compiler and ip4_bit segfault fixes from troy@shun.org (tx!)
+	conf-* files are now in main dir.
+
 	
 
-ucspi-tcp6 -- version: 1.01 post-beta.
+ucspi-tcp6 -- version: 1.02. post-beta.
 
 

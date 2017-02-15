@@ -1,7 +1,12 @@
 gcc -O2 -g  
 
-This will be used to compile .c files.
+# This will be used to compile .c files.
+
+gcc -O2 [-jN]
+
+# gcc on a multi-core ARM processor for parallel compilation; N = number of CPUs 
+# this might not work with some gcc's
 
 clang -O2 -g -Wall
 
-You can use clang instead.
+# You can use clang instead.

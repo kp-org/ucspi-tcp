@@ -1,7 +1,15 @@
 gcc -s -m64
 
+# 64bit AMD/Intel architecture
+
 gcc -s
+
+# 32bit AMD/Intel arch + ARM
+
+gcc -s -mtune=generic-arm7-a
+
+# ARMv7 support -- 32 bit only
 
 clang -s -m64 
 
-This will be used to link .o files into an executable.
+# Useful for the native clang compiler, if not synlinked as cc

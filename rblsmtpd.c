@@ -42,12 +42,17 @@ void ip_init(void)
 
   tcp_proto = env_get("PROTO");
   if (!tcp_proto) tcp_proto = "";
-  ip_env = env_get("TCPREMOTEIP");
-  if (!ip_env) ip_env = "";
-  if (str_diff(tcp_proto,"TCP6") == 0) {
+  if (!str_diff(tcp_proto,"TCP6")) {
+    ip_env = env_get("TCP6REMOTEIP");
     if (byte_equal(ip_env,7,V4MAPPREFIX)) 
       ip_env = ip_env + 7;
-     else
+    else
+      flagip6 = 1;
+  } else {
+    ip_env  = env_get("TCPREMOTEIP");
+    if (byte_equal(ip_env,7,V4MAPPREFIX)) 
+      ip_env = ip_env + 7;
+    else
       flagip6 = 1;
   }
  

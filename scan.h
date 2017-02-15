@@ -7,8 +7,8 @@ extern unsigned int scan_nbbint(char *,unsigned int,unsigned int,unsigned int,un
 extern unsigned int scan_ushort(char *,unsigned short *);
 extern unsigned int scan_xshort(char *,unsigned short *);
 extern unsigned int scan_nbbshort(char *,unsigned int,unsigned int,unsigned int,unsigned short *);
-extern unsigned int scan_ulong(char *,unsigned long *);
-extern unsigned int scan_xlong(char *,unsigned long *);
+extern unsigned int scan_ulong(const char *,unsigned long *);
+extern unsigned int scan_xlong(const char *,unsigned long *);
 extern unsigned int scan_nbblong(char *,unsigned int,unsigned int,unsigned int,unsigned long *);
 
 extern unsigned int scan_plusminus(char *,int *);
