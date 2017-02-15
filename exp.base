@@ -68,7 +68,7 @@ PROTO=TCP6
 TCPLOCALHOST=Local
 TCPLOCALIP=::1
 TCPLOCALPORT=50020
-TCPREMOTEHOST=unset
+TCPREMOTEHOST=localhost
 TCPREMOTEIP=::1
 TCPREMOTEPORT=50016
 TCPREMOTEINFO=unset
@@ -147,17 +147,29 @@ allow connection
 0
 --- tcprules handles comments, address ranges, multiple variables
 0
-default:
+rule 127.0.:
+set environment variable which=first
+set environment variable where=whatever
 allow connection
-default:
+rule 127.1.:
+set environment variable which=first
+set environment variable where=whatever
 allow connection
-default:
+rule 127.2.:
+set environment variable which=first
+set environment variable where=whatever
 allow connection
-default:
+rule 127.3.:
+set environment variable which=first
+set environment variable where=whatever
 allow connection
-default:
+rule 127.4.:
+set environment variable which=first
+set environment variable where=whatever
 allow connection
-default:
+rule 127.5.:
+set environment variable which=first
+set environment variable where=whatever
 allow connection
 default:
 allow connection
@@ -331,16 +343,24 @@ argv0: usage: argv0 realname program [ arg ... ]
 ok
 0
 --- rblsmtpd finds 127.0.0.2 on the RBL
-whoops
+rblsmtpd: 127.0.0.2 pid x: 451 http://www.spamhaus.org/sbl/query/SBL233
+220 rblsmtpd.local^M
+451 http://www.spamhaus.org/sbl/query/SBL233^M
+221 rblsmtpd.local^M
 0
 --- rblsmtpd -b uses a permanent error code
-whoops
+rblsmtpd: 127.0.0.2 pid x: 451 http://www.spamhaus.org/sbl/query/SBL233
+220 rblsmtpd.local^M
+451 http://www.spamhaus.org/sbl/query/SBL233^M
+221 rblsmtpd.local^M
 0
 --- rblsmtpd quits after a timeout
-whoops
+rblsmtpd: 127.0.0.2 pid x: 451 http://www.spamhaus.org/sbl/query/SBL233
+220 rblsmtpd.local^M
 0
 --- rblsmtpd prints an immediate error message with -t0
-whoops
+rblsmtpd: 127.0.0.2 pid x: 451 http://www.spamhaus.org/sbl/query/SBL233
+451 http://www.spamhaus.org/sbl/query/SBL233^M
 0
 --- rblsmtpd understands an empty $RBLSMTPD
 ok
@@ -363,9 +383,9 @@ ok
 --- rblsmtpd understands -a
 ok
 0
-4134
+16221
 --- tcpserver -1v prints proper messages
-50016
+::1 : 50016
 tcpserver: status: 0/2
 tcpserver: status: 1/2
 tcpserver: pid x from ::x
@@ -379,19 +399,19 @@ tcpserver: end x status 0
 tcpserver: status: 0/2
 tcpserver: status: 1/2
 tcpserver: pid x from ::x
-tcpserver: ok x Local:::1:x :::1::x
-tcpserver: end x status 0
-tcpserver: status: 0/2
-tcpserver: status: 1/2
+tcpserver: status: 2/2
 tcpserver: pid x from ::x
 tcpserver: ok x Local:::1:x :::1::x
 tcpserver: end x status 0
-tcpserver: status: 0/2
 tcpserver: status: 1/2
-tcpserver: pid x from ::x
+tcpserver: status: 2/2
 tcpserver: ok x Local:::1:x :::1::x
+tcpserver: pid x from ::x
 tcpserver: end x status 0
-tcpserver: status: 0/2
+tcpserver: status: 1/2
+tcpserver: ok x Local:::1:x :::1::x
+tcpserver: status: 2/2
+tcpserver: end x status 0
 tcpserver: status: 1/2
 tcpserver: pid x from ::x
 tcpserver: ok x Local:::1:x :::1::x

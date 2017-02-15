@@ -19,7 +19,7 @@ int socket_send6(int s,const char *buf,unsigned int len,const char ip[16],uint16
 
   byte_zero(&sa,sizeof sa);
 #ifdef LIBC_HAS_IP6
-  if (noipv6) {
+  if (ipv4) {
 #endif
     if (ip6_isv4mapped(ip))
       return socket_send4(s,buf,len,ip+12,port);

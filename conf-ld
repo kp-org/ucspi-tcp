@@ -2,4 +2,6 @@ gcc -s -m64
 
 gcc -s
 
+clang -s -m64 
+
 This will be used to link .o files into an executable.

@@ -2,14 +2,14 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include "socket.h"
 #include <errno.h>
+#include "socket.h"
 #include "byte.h"
 #include "uint16.h"
 #include "dns.h"
 #include "ip6.h"
 
-#define UDPSIZE 1024
+#define UDPSIZE 1024 /* IPv6 MTU size is 1280 byte */
 
 static int serverwantstcp(const char *buf,unsigned int len)
 {

@@ -30,8 +30,6 @@ Note: 	This test are practically unaltered taken from ucspi-tcp-0.88.
 	However, they mainly are based on IPv6 tests.
 	Execution takes some time and the results might not be meaningful.
 	This is in particular true for rblsmtpd.
-Caution: On MacOS X calls to tcpclient/tcpserver with unresolveable hostnames
-	results in stalled programs. 
 
 
-Erwin Hoffmann, Hoehn, 19-01-2013.
+Erwin Hoffmann, Hoehn, 03-12-2013.

@@ -38,7 +38,7 @@ void ip_init(void)
   unsigned int i;
   unsigned int j;
   char hexval;
-  unsigned char remoteip[16];
+  char remoteip[16];
 
   tcp_proto = env_get("PROTO");
   if (!tcp_proto) tcp_proto = "";

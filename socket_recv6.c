@@ -23,7 +23,7 @@ int socket_recv6(int s,char *buf,unsigned int len,char ip[16],uint16 *port,uint3
   if (r == -1) return -1;
 
 #ifdef LIBC_HAS_IP6
-  if (noipv6) {
+  if (ipv4) {
     struct sockaddr_in *sa4=(struct sockaddr_in *)&sa;
     byte_copy(ip,12,V4mappedprefix);
     byte_copy(ip+12,4,(char *) &sa4->sin_addr);

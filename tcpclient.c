@@ -1,6 +1,8 @@
 #include <sys/types.h>
+#include <unistd.h>
 #include <sys/param.h>
 #include <netdb.h>
+#include <netinet/in.h>
 #include "sig.h"
 #include "exit.h"
 #include "sgetopt.h"
@@ -43,7 +45,7 @@ void usage(void)
 host port program");
 }
 
-int forcev6 = 0;
+int ipv6 = 0;
 int verbosity = 1;
 int flagdelay = 1;
 int flagremoteinfo = 1;
@@ -70,7 +72,7 @@ char ipstr[IP6_FMT];
 
 char seed[128];
 
-main(int argc,char **argv)
+int main(int argc,char **argv)
 {
   int fakev4=0;
   unsigned long u;
@@ -88,8 +90,8 @@ main(int argc,char **argv)
  
   while ((opt = getopt(argc,argv,"46dDvqQhHrRi:p:t:T:l:I:")) != opteof)
     switch(opt) {
-      case '4': noipv6 = 1; break;
-      case '6': forcev6 = 1; break;
+      case '4': ipv4 = 1; break;
+      case '6': ipv6 = 1; break;
       case 'd': flagdelay = 1; break;
       case 'D': flagdelay = 0; break;
       case 'v': verbosity = 2; break;
@@ -118,7 +120,7 @@ main(int argc,char **argv)
   hostname = *argv;
   if (!hostname) usage();
   if (!hostname[0] || str_equal(hostname,"0"))
-    hostname = (noipv6?"127.0.0.1":"::1");
+    hostname = (ipv4?"127.0.0.1":"::1");
 
   x = *++argv;
   if (!x) usage();
@@ -184,7 +186,7 @@ main(int argc,char **argv)
   if (socket_local6(s,iplocal,&portlocal,&netif) == -1)
     strerr_die2sys(111,FATAL,"unable to get local address: ");
 
-  if (!forcev6 && (ip6_isv4mapped(iplocal) || byte_equal(iplocal,16,V6any)))
+  if (!ipv6 && (ip6_isv4mapped(iplocal) || byte_equal(iplocal,16,V6any)))
     fakev4=1;
 
   if (!pathexec_env("PROTO",fakev4?"TCP":"TCP6")) nomem();

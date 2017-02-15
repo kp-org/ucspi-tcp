@@ -203,6 +203,20 @@
 20130820 (feh)
 	added env vars TCP6REMOTEIP, TCP6REMOTEPORT, TCP6REMTOEHOST.
 	tx. Roberto Puzzanghera	
+20131006 (feh)
+	fixed wrong command path substitution in scripts.
+	added TCP6REMOTEIP, TCP6REMOTEPORT, TCP6REMTOEHOST to man tcp-environ.
+20131111 (feh)
+	fixed problem with IFIDX usage in tcpserver. 
+	fixed problem with A-Name resolution. tx. John Levine. 
+20131204 (feh)
+	clean ups to stream-line with ucspi-ssl.
+	package/rts is working now.
+20140107 (feh + John Levine)
+	thanks to the bug report of John Levine some flaws were fixed
+	which caused troubles in particular using C99 compilers.
 	
 
-ucspi-tcp6 -- version: 0.99, beta.
+ucspi-tcp6 -- version: 1.00 post-beta.
+
+

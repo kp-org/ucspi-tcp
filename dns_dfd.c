@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <errno.h>
 #include "byte.h"
 #include "dns.h"
 #include "error.h"

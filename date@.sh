@@ -7,4 +7,4 @@ else
 fi
 host=${1-0}
 port=13
-HOME/bin/tcpclient -RHl0 "$vers" -- "$host" "$port" sh -c 'exec HOME/command/delcr <&6' | cat -v
+HOME/command/tcpclient -RHl0 "$vers" -- "$host" "$port" sh -c 'exec HOME/command/delcr <&6' | cat -v

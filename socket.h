@@ -27,6 +27,9 @@ extern int socket_local4(int,char *,uint16 *);
 extern int socket_remote4(int,char *,uint16 *);
 extern int socket_local6(int s,char *ip,uint16 *port,uint32 *scope_id);
 extern int socket_remote6(int s,char *ip,uint16 *port,uint32 *scope_id);
+extern int socket_ipoptionskill(int s);
+extern int socket_ip6optionskill(int s);
+extern int socket_tcpnodelay(int s);
 
 /* enable sending udp packets to the broadcast address */
 extern int socket_broadcast(int);
@@ -48,6 +51,6 @@ extern uint32 socket_getifidx(const char *ifname);
 
 extern void socket_tryreservein(int,int);
 
-extern int noipv6;
+extern int ipv4;
 
 #endif

@@ -10,7 +10,7 @@ void puts(char *s)
   if (buffer_puts(&b,s) == -1) _exit(111);
 }
 
-main(int argc,char **argv)
+int main(int argc,char **argv)
 {
   char *name;
   char *value;

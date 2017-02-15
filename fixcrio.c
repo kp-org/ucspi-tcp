@@ -127,7 +127,7 @@ void doit(int fdleft,int fdright)
   _exit(0);
 }
 
-main(int argc,char **argv,char **envp)
+int main(int argc,char **argv,char **envp)
 {
   int piin[2];
   int piout[2];

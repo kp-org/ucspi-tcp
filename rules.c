@@ -9,6 +9,7 @@
 #include "getln.h"
 #include "ip4_bit.h"
 #include "ip6.h"
+#include "str.h"
 
 stralloc rules_name = {0};
 stralloc ipstring = {0};

@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "strerr.h"
 #include "stralloc.h"
 #include "getln.h"
@@ -8,9 +9,13 @@
 #include "cdb_make.h"
 #include "ip4_bit.h"
 #include "ip6.h"
+#include "scan.h"
+#include "open.h"
 
 #define FATAL "tcprules: fatal: "
 #define SYNTAX "tcprules: syntax: "
+
+extern int rename(const char *, const char *); /* declared in stdio, ugh */
 
 unsigned long linenum = 0;
 char *fntemp;
@@ -125,7 +130,7 @@ void doaddressdata(void) {
       }
       return;
     }
-    else if (i = byte_chr(address.s,address.len,'-') < address.len) {	
+    else if ((i = byte_chr(address.s,address.len,'-')) < address.len) {	
       left = byte_rchr(address.s,i,'.');
       if (left == i) left = 0; else ++left; 
             
@@ -180,7 +185,7 @@ void doaddressdata(void) {
   return;
 }
 
-main(int argc,char **argv) {
+int main(int argc,char **argv) {
   int lastcolonpos;
   char *x;
   int len;

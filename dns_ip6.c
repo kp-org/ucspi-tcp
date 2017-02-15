@@ -57,11 +57,9 @@ int dns_ip6(stralloc *out,stralloc *fqdn)
 
   if (!stralloc_copys(out,"")) return -1;
   if (!stralloc_readyplus(fqdn,1)) return -1;
-  /*fqdn->s[fqdn->len]=0;*/
-  if (!stralloc_0(fqdn)) return -1;
+  fqdn->s[fqdn->len]=0;
   if ((i=ip6_scan(fqdn->s,ip))) {
-    /*if (fqdn->s[i]) return -1;*/
-      fqdn->s[fqdn->len]=0;
+    if (fqdn->s[i]) return -1;
     stralloc_copyb(out,ip,16);
     return 0;
   }

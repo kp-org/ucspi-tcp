@@ -2,7 +2,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <errno.h>
 #include "byte.h"
 #include "socket.h"
 #include "ip6.h"
@@ -15,7 +14,7 @@ int socket_connect6(int s,const char ip[16],uint16 port,uint32 scope_id)
 #ifdef LIBC_HAS_IP6
   struct sockaddr_in6 sa;
 
-  if (noipv6) {
+  if (ipv4) {
 #endif
     if (ip6_isv4mapped(ip))
       return socket_connect4(s,ip+12,port);

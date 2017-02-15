@@ -1,7 +1,6 @@
 # Assumptions:
 # We're not running with uid 0 or 1. -- test removed
 # We're not running with gid 0 or 2. -- test removed
-# supervise is installed.
 # The DNS cache translates ::1<->localhost.
 # There is no listener for TCP port 16.
 # There is no listener for TCP port 50016.
@@ -29,7 +28,7 @@ echo '#!/bin/sh
 chmod 755 print
 
 exec tcpserver  \
--c 2 -Bbanner -vo -D -1 -Xx rules.cdb -Rt5 -hp -l Local -b 2 \
+-c 2 -Bbanner -vo -D -1 -Xx rules.cdb -Rt5 -hp -l Local -b 2 -6 \
 ::1 50016 ./print > log.50016 2>&1 & pid_50016=$!
 
 
@@ -51,19 +50,21 @@ tcpclient nonexistent.local. 016 echo wrong; echo $?
 echo '--- tcpclient prints error message with unresolvable host name'
 tcpclient thislabelistoolongbecausednshasalimitof63charactersinasinglelabel. 016 echo wrong; echo $?
 
-## tcpsever (-6) tests
+## tcpserver (-6) tests
 
 echo '--- tcpserver prints usage message without enough arguments'
-tcpserver -v ::1 0; echo $?
+tcpserver -v -6 ::1 0; echo $?
 
 echo '--- tcpserver prints error message with unknown port name'
-tcpserver -v ::1 nonexistentport echo wrong; echo $?
+tcpserver -v -6 ::1 nonexistentport echo wrong; echo $?
 
 echo '--- tcpserver prints error message with unknown host name'
 tcpserver -v nonexistent.local. 016 echo wrong; echo $?
 
 echo '--- tcpserver prints error message with unresolvable host name'
 tcpserver -v thislabelistoolongbecausednshasalimitof63charactersinasinglelabel. 016 echo wrong; echo $?
+
+## tcpserver  (-4) tests
 
 echo '--- tcpserver prints error message with non-local host name'
 tcpserver -v -4 1.2.3.4 016 echo wrong; echo $?
@@ -73,7 +74,7 @@ tcpclient -p 50017 -R -H -T 10 -l Local 0 50016 sh -c 'cat <&6'
 echo $?
 
 echo '--- tcpclient recognizes -D, -i, -r, -h, -t'
-tcpclient -Di ::1 -p 50018 -hrt1 -l Local \
+tcpclient -Di ::1 -p 50018 -hrt1 -l Local -6 \
 ::1 50016 sh -c 'cat <&6'
 echo $?
 
@@ -90,7 +91,7 @@ tcpclient -v -R -H -l Local 0 50016 echo ok
 echo $?
 
 echo '--- tcpserver prints error message with used port'
-tcpserver -v -R -H -l Local ::1 50016 echo wrong
+tcpserver -v -R -H -l Local -6 ::1 50016 echo wrong
 echo $?
 
 echo '--- tcpcat works'

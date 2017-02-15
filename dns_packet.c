@@ -2,7 +2,6 @@
 DNS should have used LZ77 instead of its own sophomoric compression algorithm.
 */
 
-#include <errno.h>
 #include "dns.h"
 #include "error.h"
 

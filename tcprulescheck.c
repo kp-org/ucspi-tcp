@@ -10,11 +10,8 @@
 
 void found(char *data,unsigned int datalen)
 {
-  int i;
   unsigned int next0;
   stralloc ip6address = {0};
-  stralloc expandedip6address = {0};
-  stralloc rule_temp = {0};
   
   buffer_puts(buffer_1,"rule ");
 
@@ -52,7 +49,7 @@ void found(char *data,unsigned int datalen)
   _exit(0);
 }
 
-main(int argc,char **argv)
+int main(int argc,char **argv)
 {
   char *fnrules;
   int fd;

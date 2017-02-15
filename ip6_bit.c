@@ -14,7 +14,6 @@ char strnum[FMT_ULONG];
  * @param ip6address 	The source address.
  * @param ip6string	The destination address.
  * @param prefix 	The net prefix bits (maximum 128 bits for IPv6).
- * @param bitsub 	Enum type which is used in order to turn off/on the substitution of all bits one.
  * @return -1:lack of memory,0: non valid IPv6 address,1: successful converted.
  */
 

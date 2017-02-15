@@ -78,15 +78,10 @@ exits when it receives SIGTERM.
 .TP
 .B \-1
 After preparing to receive connections,
-print the local port number to standard output.
+print the local ip address and port number to standard output.
 .TP
 .B \-4
-Fall back to IPv4 sockets.  This is necessary for terminally broken
-systems like OpenBSD which will not let IPv6 sockets connect to
-IPv4-mapped IPv6 addresses.  Please note that this also applies to DNS
-lookups, so you will have to use an DNS resolver with an IPv6 address to
-accept IPv6 connections.  Use \fIDNSCACHEIP\fR to set the DNS resolver
-IP dynamically.
+Fall back to IPv4 sockets.  
 .TP
 .B \-6
 Force IPv6 mode in UCSPI environment variables, even for
@@ -340,10 +335,10 @@ filter-rule instead:
 reads the environment variable
 .I DNSCACHEIP
 which can be used to specify the
-recursive DNS Resolver.
+recursive DNS Resolver dynamically.
 
 .SH "ENVIRONMENT VARIABLES SET"
-.B tcpservers
+.B tcpserver
 provides the following environment variables:
 
 .I PROTO
@@ -354,10 +349,13 @@ The interface name for IPv6 connections:
 
 The local information:
 .IR TCPLOCALIP ,
+.IR TCP6LOCLAIP ,
 .IR TCPLOCALPORT ,
-.IR TCPLOCALHOST .
+.IR TCP6LOCALPORT,
+.IR TCPLOCALHOST,
+.IR TCP6LOCALHOST .
 
-IP address of connection:
+The IP address of connection:
 .IR TCPREMOTEIP 
 and
 .IR TCP6REMOTEIP 

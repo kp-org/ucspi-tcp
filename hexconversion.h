@@ -10,7 +10,7 @@
 
 void bytetohex(unsigned char decimal, char hex[3]);
 char tohex(char num);
-static int fromhex(unsigned char c);
+/* static int fromhex(unsigned char c); */
 
 #endif	/* HEXCONVERSION_H */
 

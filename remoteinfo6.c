@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "fmt.h"
 #include "buffer.h"
 #include "socket.h"
@@ -56,14 +57,14 @@ static int doit(stralloc *out,int s,char ipremote[16],uint16 portremote,char ipl
   if (socket_bind6(s,iplocal,0,netif) == -1) return -1;
   if (timeoutconn6(s,ipremote,113,timeout,netif) == -1) return -1;
 
-  buffer_init(&b,mywrite,s,bspace,sizeof bspace);
+  buffer_init(&b,(int (*)())mywrite,s,bspace,sizeof bspace);
   buffer_put(&b,strnum,fmt_ulong(strnum,portremote));
   buffer_put(&b," , ",3);
   buffer_put(&b,strnum,fmt_ulong(strnum,portlocal));
   buffer_put(&b,"\r\n",2);
   if (buffer_flush(&b) == -1) return -1;
 
-  buffer_init(&b,myread,s,bspace,sizeof bspace);
+  buffer_init(&b,(int (*)())myread,s,bspace,sizeof bspace);
   numcolons = 0;
   for (;;) {
     if (buffer_get(&b,&ch,1) != 1) return -1;

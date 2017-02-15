@@ -1,6 +1,8 @@
 #include "byte.h"
 #include "stralloc.h"
 #include "str.h"
+#include "ip6.h"
+#include "hexconversion.h"
 
 /**
  * This function expands any valid IPv6 address into its full format of 16 bytes.

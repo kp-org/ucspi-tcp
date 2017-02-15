@@ -1,6 +1,9 @@
 #include "ip4_bit.h"
 #include "ip4.h"
 #include "byte.h"
+#include "scan.h"
+#include "str.h"
+#include "fmt.h"
 
 #define BITSUBSTITUTION
 
@@ -12,13 +15,14 @@ int getnumber(char *buf, int len, unsigned long *u)
   if (!stralloc_copyb(&sanumber,buf,len)) return -1;
   if (!stralloc_0(&sanumber)) return -1;
   if (sanumber.s[scan_ulong(sanumber.s,u)]) return -1;
+  return 0;
 }
 
 int getaddressasbit(char *ip, int prefix, stralloc *ip4string)
 {
   int count;
   int i;
-  int num;
+  unsigned long num;
   int sufcount = 0;
   int pos = 0;
   int len = byte_chr(ip,str_len(ip),'/');
@@ -32,8 +36,8 @@ int getaddressasbit(char *ip, int prefix, stralloc *ip4string)
   for (;;) {
     num = 0;
     count = 1;
-    if (getnumber(ip + pos,posl, &num) == -1) return 2;
-    if (num > 255 || num < 0) return 2;
+    if (getnumber(ip + pos,posl, &num) == -1) return -1;
+    if (num > 255) return 2;
     
     for (i = 1; i < 9; i++) {
       if (sufcount >= prefix) return 0;

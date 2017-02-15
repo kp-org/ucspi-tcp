@@ -1,4 +1,5 @@
 #include <sys/types.h>
+#include <unistd.h>
 #include <sys/param.h>
 #include <netdb.h>
 #include "uint16.h"
@@ -29,7 +30,7 @@
 #include "sig.h"
 #include "dns.h"
 
-int forcev6 = 0;
+int ipv6 = 0;
 int verbosity = 1;
 int flagkillopts = 1;
 int flagdelay = 1;
@@ -143,12 +144,12 @@ void doit(int t)
   char *stripaddr;
   int j;
 
-  if (!forcev6 && ip6_isv4mapped(remoteip)) mappedv4 = 1;
+  if (!ipv6 && ip6_isv4mapped(remoteip)) mappedv4 = 1;
 
   if (mappedv4)
     remoteipstr[ip4_fmt(remoteipstr, remoteip + 12)] = 0;
   else {
-    if (noipv6 && !forcev6)
+    if (ipv4 && !ipv6)
       remoteipstr[ip4_fmt(remoteipstr,remoteip)] = 0;
     else
       remoteipstr[ip6_compactaddr(remoteipstr,remoteip)] = 0;
@@ -167,7 +168,7 @@ void doit(int t)
     socket_tcpnodelay(t);
 
   if (*banner) {
-    buffer_init(&b,write,t,bspace,sizeof bspace);
+    buffer_init(&b,(int (*)())write,t,bspace,sizeof bspace);
     if (buffer_putsflush(&b,banner) == -1)
       strerr_die2sys(111,DROP,"unable to print banner: ");
   }
@@ -189,15 +190,20 @@ void doit(int t)
       }
   env("PROTO",mappedv4?"TCP":"TCP6");
   env("TCPLOCALIP",localipstr);
-  if (!noipv6) {
+  if (!ipv4) {
     localipstr[ip6_compactaddr(localipstr,localip)] = 0;
     env("TCPLOCALIP",localipstr);
   }
 
   env("TCPLOCALPORT",localportstr);
   env("TCPLOCALHOST",localhost);
-  if (!mappedv4 && scope_id)
-    env("TCP6INTERFACE",socket_getifname(scope_id));
+  if (!mappedv4) {
+    env("TCP6LOCALIP",localipstr);
+    env("TCP6LOCALHOST",localhost);
+    env("TCP6LOCALPORT",localportstr);
+    if (scope_id)
+      env("TCP6INTERFACE",socket_getifname(scope_id));
+  }
 
   if (flagremotehost)
     if (dns_name6(&remotehostsa,remoteip) == 0)
@@ -217,8 +223,8 @@ void doit(int t)
   env("TCPREMOTEIP",remoteipstr);
   env("TCPREMOTEPORT",remoteportstr);
   env("TCPREMOTEHOST",remotehost);
-  if (!noipv6) {
-    remoteip6str[ip6_compactaddr(remoteip6str, remoteip)] = 0;
+  if (!ipv4) {
+    remoteip6str[ip6_compactaddr(remoteip6str,remoteip)] = 0;
     env("TCP6REMOTEIP",remoteip6str);
     env("TCP6REMOTEPORT",remoteportstr);
     env("TCP6REMOTEHOST",remotehost);
@@ -232,7 +238,7 @@ void doit(int t)
   env("TCPREMOTEINFO",flagremoteinfo ? tcpremoteinfo.s : 0);
 
   stripaddr=remoteipstr;
-  if (!forcev6 && byte_equal(remoteipstr,7,V4MAPPREFIX)) 
+  if (!ipv6 && byte_equal(remoteipstr,7,V4MAPPREFIX)) 
     stripaddr = remoteipstr+7;
 
   if (fnrules) {
@@ -327,10 +333,9 @@ void sigchld()
   }
 }
 
-main(int argc,char **argv)
+int main(int argc,char **argv)
 {
   char *hostname;
-  char *portname;
   int opt;
   struct servent *se;
   char *x;
@@ -365,8 +370,8 @@ main(int argc,char **argv)
       case 'g': scan_ulong(optarg,&gid); break;
       case 'I': netif=socket_getifidx(optarg); break;
       case '1': flag1 = 1; break;
-      case '4': noipv6 = 1; break;
-      case '6': forcev6 = 1; break;
+      case '4': ipv4 = 1; break;
+      case '6': ipv6 = 1; break;
       case 'l': localhost = optarg; break;
       default: usage();
     }
@@ -409,7 +414,7 @@ main(int argc,char **argv)
       strerr_die3x(111,FATAL,"no IP address for ",hostname);
     byte_copy(localip,16,addresses.s);
     if (ip6_isv4mapped(localip))
-      noipv6=1;
+      ipv4=1;
   }
 
   s = socket_tcp6();
@@ -429,9 +434,12 @@ main(int argc,char **argv)
     strerr_die2sys(111,FATAL,"unable to set uid: ");
 
  
+  localipstr[ip6_compactaddr(localipstr,localip)]= 0;
   localportstr[fmt_ulong(localportstr,localport)] = 0;
   if (flag1) {
-    buffer_init(&b,write,1,bspace,sizeof bspace);
+    buffer_init(&b,(int (*)())write,1,bspace,sizeof bspace);
+    buffer_puts(&b,localipstr);
+    buffer_puts(&b," : ");
     buffer_puts(&b,localportstr);
     buffer_puts(&b,"\n");
     buffer_flush(&b);

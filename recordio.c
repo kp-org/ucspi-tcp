@@ -141,7 +141,7 @@ void doit(int fdleft,int fdright) /* copy 0 -> fdleft, copy fdright -> 1 */
   _exit(0);
 }
 
-main(int argc,char **argv,char **envp)
+int main(int argc,char **argv,char **envp)
 {
   int piin[2];
   int piout[2];

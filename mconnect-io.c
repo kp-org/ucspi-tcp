@@ -18,7 +18,7 @@ int myread(int fd,char *buf,int len)
   return read(fd,buf,len);
 }
 
-main()
+int main()
 {
   int pid;
   int wstat;
@@ -30,8 +30,8 @@ main()
   if (pid == -1) strerr_die2sys(111,"mconnect-io: fatal: ","unable to fork: ");
 
   if (!pid) {
-    buffer_init(&bin,myread,0,inbuf,sizeof inbuf);
-    buffer_init(&bout,write,7,outbuf,sizeof outbuf);
+    buffer_init(&bin,(int (*)())myread,0,inbuf,sizeof inbuf);
+    buffer_init(&bout,(int (*)())write,7,outbuf,sizeof outbuf);
 
     while (buffer_get(&bin,&ch,1) == 1) {
       if (ch == '\n') buffer_put(&bout,"\r",1);
@@ -40,8 +40,8 @@ main()
     _exit(0);
   }
 
-  buffer_init(&bin,myread,6,inbuf,sizeof inbuf);
-  buffer_init(&bout,write,1,outbuf,sizeof outbuf);
+  buffer_init(&bin,(int (*)())myread,6,inbuf,sizeof inbuf);
+  buffer_init(&bout,(int (*)())write,1,outbuf,sizeof outbuf);
 
   while (buffer_get(&bin,&ch,1) == 1)
     buffer_put(&bout,&ch,1);

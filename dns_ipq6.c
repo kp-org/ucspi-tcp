@@ -18,7 +18,7 @@ static int doit(stralloc *work,const char *rule)
   if (work->len < colon) return 1;
   prefixlen = work->len - colon;
   if ((ch == '=') && prefixlen) return 1;
-  if (case_diffb(rule,colon,work->s + prefixlen)) return 1;
+  if (case_diffb((char *)rule,colon,work->s + prefixlen)) return 1;
   if (ch == '?') {
     if (byte_chr(work->s,prefixlen,'.') < prefixlen) return 1;
     if (byte_chr(work->s,prefixlen,':') < prefixlen) return 1;
@@ -38,7 +38,7 @@ int dns_ip6_qualify_rules(stralloc *out,stralloc *fqdn,const stralloc *in,const 
   unsigned int plus;
   unsigned int fqdnlen;
 
-  if (!stralloc_copy(fqdn,in)) return -1;
+  if (!stralloc_copy(fqdn, (stralloc *)in)) return -1;
 
   for (j = i = 0;j < rules->len;++j)
     if (!rules->s[j]) {
