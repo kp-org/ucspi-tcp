@@ -25,7 +25,7 @@ or by means of a range of contiguous addresses
 .IP
 18.23.0.1-22:ins
 .P
-In addition, a CIDR notation can be used instead. The rule
+Rather a CIDR notation can be used instead. The rule
 .IP
 127.0/8:allow
 .P
@@ -58,9 +58,21 @@ in it's compactified format, simply include the final '::'
 for convenience. The resulting address is truncated 
 to the number of provided prefix bits. 
 
+.SH "IPv6 MAPPED IPv4 ADDRESSES"
+.B tcprules
+does currently not understand IPv6 mapped IPv4 addresses
+.IP
+::ffff:a.b.c.d
+.P
+where 
+.IP
+a.b.c.d
+.P 
+is the mapped IPv4 addresses.
+
 .SH USAGE
 .B tcprules
-reads rules from its standard input and writes them into
+reads rules from it's standard input and writes them into
 .I cdb
 in a binary format suited for quick access by
 .BR tcpserver (1).

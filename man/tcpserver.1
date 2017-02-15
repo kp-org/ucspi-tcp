@@ -10,7 +10,7 @@ tcpserver \- accept incoming TCP connections
 .B \-c\fIlimit
 ]
 [
-.B \-x\fIrules.cdb
+.B \-X\-x\fIrules.cdb
 ]
 [
 .B \-B\fIbanner
@@ -83,15 +83,15 @@ print the local port number to standard output.
 .B \-4
 Fall back to IPv4 sockets.  This is necessary for terminally broken
 systems like OpenBSD which will not let IPv6 sockets connect to
-V4-mapped IPv6 addresses.  Please note that this also applies to DNS
+IPv4-mapped IPv6 addresses.  Please note that this also applies to DNS
 lookups, so you will have to use an DNS resolver with an IPv6 address to
-accept IPv6 connections.  Use \fBDNSCACHEIP\fR to set the DNS resolver
+accept IPv6 connections.  Use \fIDNSCACHEIP\fR to set the DNS resolver
 IP dynamically.
 .TP
 .B \-6
 Force IPv6 mode in UCSPI environment variables, even for
-IPv4 connections.  This will set \fB$PROTO\fR to \fBTCP6\fR and put
-IPv4-mapped IPv6 addresses in \fBTCPLOCALIP\fR and \fBTCPREMOTEIP\fR.
+IPv4 connections.  This will set \fIPROTO\fR to \fBTCP6\fR and put
+IPv4-mapped IPv6 addresses in \fITCPLOCALIP\fR and \fITCPREMOTEIP\fR.
 .TP
 .B \-c\fIlimit
 Do not handle more than
@@ -124,6 +124,11 @@ you can rerun
 to change
 .BR tcpserver 's
 behavior on the fly.
+.TP 
+.B \-X
+continue processing, even if 
+.I rules.cdb
+is not readable.
 .TP
 .B \-B\fIbanner
 Write
@@ -133,9 +138,9 @@ to the network immediately after each connection is made.
 writes
 .I banner
 before looking up
-.BR TCPREMOTEHOST ,
+.IR TCPREMOTEHOST ,
 before looking up
-.BR TCPREMOTEINFO ,
+.IR TCPREMOTEINFO ,
 and before checking
 .IR rules.cdb .
 
@@ -214,10 +219,10 @@ Paranoid.
 After looking up the remote host name,
 look up the IP addresses for that name,
 and make sure one of them matches
-.BR TCPREMOTEIP .
+.IR TCPREMOTEIP .
 If none of them do,
 unset
-.BR TCPREMOTEHOST .
+.IR TCPREMOTEHOST .
 .TP
 .B \-P
 (Default.)
@@ -226,7 +231,7 @@ Not paranoid.
 .B \-h
 (Default.)
 Look up the remote host name and set
-.BR TCPREMOTEHOST .
+.IR TCPREMOTEHOST .
 .TP
 .B \-H
 Do not look up the remote host name.
@@ -236,22 +241,22 @@ Do not look up the local host name;
 use
 .I localname
 for
-.BR TCPLOCALHOST .
+.IR TCPLOCALHOST .
 .TP
 .B \-r
 Attempt to obtain
-.B TCPREMOTEINFO
+.I TCPREMOTEINFO
 from the remote host.
 .TP
 .B \-R
 (Default.)
 Do not attempt to obtain
-.B TCPREMOTEINFO
+.I TCPREMOTEINFO
 from the remote host.
 .TP
 .B \-t\fItimeout
 Give up on the 
-.B TCPREMOTEINFO
+.I TCPREMOTEINFO
 connection attempt
 after
 .I timeout
@@ -283,12 +288,53 @@ has to be provided.
 
 \fINote\fR: The kernel might use temporary changing SLAAC addresses. 
 
+.SH "IPv4-MAPPED IPv6 ADDRESSES"
+Setting up 
+.B tcpserver 
+with simultaneous bindings to IPv4 and IPv6 addresses, 
+the Unix kernel emplopys the mapping
+.IP 
+::ffff:a.b.c.d
+.P
+for the IPv4 address
+.IP
+a.b.c.d
+.P 
+Setting up 
+.B tcpserver
+in IPv4 mode only 
+.I -4
+or in compatibility mode, IPv4 addresses are considered
+in their native format without the IPv6 prefix.
+Thus, usual IPv4 addresses can be entered in 
+.I rules.cdb
+even in common IPv4/IPv6 bindings.
+
+.SH "LOOPBACK ADDRESSES"
+IPv4 and IPv6 have a significant different
+understanding of loopback addresses:
+.IP
+127./8
+.P
+.IP
+::1/128
+.P
+Instead of using the respective IP addresses, the alias
+.IP
+localhost
+.P 
+should be used for the binding and a potential
+filter-rule instead:
+.IP 
+=localhost:allow
+.P
+
 .SH "ENVIRONMENT VARIABLES READ"
-.B .tcpserver
+.B tcpserver
 reads the environment variable
 .I DNSCACHEIP
 which can be used to specify the
-resursive DNS Resolver.
+recursive DNS Resolver.
 
 .SH LOGGING
 Invoking
@@ -300,7 +346,7 @@ the hostnames in case the option
 .I -h
 is given, as well as the used IP addresses and ports of the peers. 
 The displayed IP addresses are showen either als generic
-compactified IPv6 addresses, or as IPv6-mapped IPv4 addresses
+compactified IPv6 addresses, or as IPv4-mapped IPv6 addresses
 unless 
 .B tcpserver
 is solely bound to an IPv4 address.

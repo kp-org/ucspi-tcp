@@ -13,6 +13,7 @@
 #include "commands.h"
 #include "pathexec.h"
 #include "dns.h"
+#include "ip6.h"
 
 #define FATAL "rblsmtpd: fatal: "
 
@@ -22,36 +23,73 @@ void nomem(void)
 }
 void usage(void)
 {
-  strerr_die1x(100,"rblsmtpd: usage: rblsmtpd [ -b ] [ -R ] [ -t timeout ] [ -r base ] [ -a base ] [-W] [-w delay] smtpd [ arg ... ]");
+  strerr_die1x(100,"rblsmtpd: usage: rblsmtpd [ -I ] [ -b ] [ -R ] [ -t timeout ] [ -r base ] [ -a base ] [-W] [-w delay] smtpd [ arg ... ]");
+}
+void env(char *s, char *t) 
+{
+ if (!pathexec_env(s,t)) nomem();
 }
 
+char *tcp_proto;
 char *ip_env;
+char *stripaddr;
 static stralloc ip_reverse;
+
+static inline char tohex(char c) { return c>=10?c-10+'a':c+'0'; }
 
 void ip_init(void)
 {
   unsigned int i;
   unsigned int j;
+  char hexval;
+  unsigned char remoteip[16];
+  int flagip6 = 0;
+  char *stripaddr;
 
+  tcp_proto = env_get("PROTO");
+  if (!tcp_proto) tcp_proto = "";
   ip_env = env_get("TCPREMOTEIP");
   if (!ip_env) ip_env = "";
-
+  stripaddr = ip_env;
+  if (str_diff(tcp_proto,"TCP6") == 0) {
+    if (byte_equal(ip_env,7,V4MAPPREFIX)) 
+      stripaddr = ip_env + 7;
+    else
+      flagip6 = 1;
+  }
+ 
   if (!stralloc_copys(&ip_reverse,"")) nomem();
 
-  i = str_len(ip_env);
-  while (i) {
-    for (j = i;j > 0;--j) if (ip_env[j - 1] == '.') break;
-    if (!stralloc_catb(&ip_reverse,ip_env + j,i - j)) nomem();
-    if (!stralloc_cats(&ip_reverse,".")) nomem();
-    if (!j) break;
-    i = j - 1;
+  if (flagip6) { 
+    if ((ip6_scan(ip_env,remoteip)) == 0) return;
+
+    for (j = 16; j > 0; j--) {
+      hexval = tohex(remoteip[j - 1] & 15);
+      if (!stralloc_catb(&ip_reverse,&hexval,1)) nomem();
+      if (!stralloc_cats(&ip_reverse,".")) nomem();
+
+      hexval = tohex(remoteip[j - 1] >> 4);
+      if (!stralloc_catb(&ip_reverse,&hexval,1)) nomem();
+      if (!stralloc_cats(&ip_reverse,".")) nomem(); 
+    }
+  } else {
+    i = str_len(stripaddr);
+    while (i) {
+      for (j = i;j > 0;--j) if (stripaddr[j - 1] == '.') break;
+      if (!stralloc_catb(&ip_reverse,stripaddr + j,i - j)) nomem();
+      if (!stralloc_cats(&ip_reverse,".")) nomem();
+      if (!j) break;
+      i = j - 1;
+    }
   }
 }
 
 unsigned long timeout = 60;
+int flagrblinfo = 0;
 int flagrblbounce = 0;
 int flagfailclosed = 0;
 int flagmustnotbounce = 0;
+int flaggreetdelay = 0;
 
 int decision = 0; /* 0 undecided, 1 accept, 2 reject, 3 bounce */
 static stralloc text; /* defined if decision is 2 or 3 */
@@ -123,6 +161,32 @@ void wait (unsigned long delay)
   if (!stralloc_cats(&info,"\r\n")) nomem();
 
   if (delay) sleep(delay);
+}
+
+void rblinfo(void)
+{
+  int i;
+  if (!stralloc_copys(&message,"[RBL info] ")) nomem();
+
+  if (text.len > 200) text.len = 200;
+  if (!stralloc_cat(&message,&text)) nomem();
+  for (i = 0;i < message.len;++i)
+    if ((message.s[i] < 32) || (message.s[i] > 126))
+       message.s[i] = '?';
+
+  if (!stralloc_copy(&info,&message)) nomem();
+  if (!stralloc_0(&info)) nomem();
+
+  env("RBLSMTPD",info.s);
+
+  buffer_puts(buffer_2,"rblsmtpd: ");
+  buffer_puts(buffer_2,ip_env);
+  buffer_puts(buffer_2," pid ");
+  buffer_put(buffer_2,strnum,fmt_ulong(strnum,getpid()));
+  buffer_puts(buffer_2,": ");
+  buffer_put(buffer_2,message.s,message.len);
+  buffer_puts(buffer_2,"\n");
+  buffer_flush(buffer_2);
 }
 
 void reject() { buffer_putflush(&out,message.s,message.len); }
@@ -201,12 +265,13 @@ main(int argc,char **argv,char **envp)
     }
   }
 
-  while ((opt = getopt(argc,argv,"bBcCWt:r:a:w:")) != opteof)
+  while ((opt = getopt(argc,argv,"bBcCIWt:r:a:w:")) != opteof)
     switch(opt) {
       case 'b': flagrblbounce = 1; break;
       case 'B': flagrblbounce = 0; break;
       case 'c': flagfailclosed = 1; break;
       case 'C': flagfailclosed = 0; break;
+      case 'I': flagrblinfo = 1; break;
       case 't': scan_ulong(optarg,&timeout); break;
       case 'r': rbl(optarg); break;
       case 'a': antirbl(optarg); break;

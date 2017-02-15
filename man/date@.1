@@ -2,12 +2,12 @@
 .SH NAME
 date@ \- print the date on a host
 .SH SYNTAX
-.B date@
+.B date@/date4@
 [
 .I host
 ]
 .SH DESCRIPTION
-.B date@
+.B date@/date4@
 connects to TCP port 13 (Daytime) on
 .I host
 and prints any data it receives.
@@ -16,7 +16,7 @@ It removes CR and converts unprintable characters to a visible format.
 If
 .I host
 is not supplied,
-.B date@
+.B date@/date4@
 connects to the local host.
 
 Some computers respond to port 13 with a human-readable date.

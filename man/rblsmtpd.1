@@ -6,6 +6,7 @@ rblsmtpd \- block mail from RBL-listed sites
 .B rblsmtpd
 .I opts
 .I prog
+
 .SH DESCRIPTION
 .B rblsmtpd 
 works with any SMTP server that can run under
@@ -35,6 +36,7 @@ Meanwhile it prints one line on descriptor 2 to log its activity.
 .B rblsmtpd
 drops the limited SMTP conversation after 60 seconds, 
 even if the client has not quit by then.
+
 .SH OPTIONS
 .TP
 .B \-t \fIn
@@ -45,11 +47,11 @@ seconds.
 .B Blocked clients
 .P
 If the 
-.B $RBLSMTPD 
+.B RBLSMTPD 
 environment variable is set and is nonempty,
 .B rblsmtpd
 blocks mail. It uses 
-.B $RBLSMTPD 
+.B RBLSMTPD 
 as an error message for the client. Normally
 .B rblsmtpd
 runs under
@@ -57,25 +59,27 @@ runs under
 you can use
 .BR tcprules (1)
 to set 
-.B $RBLSMTPD 
+.B RBLSMTPD 
 for selected clients. 
 
 If 
-.B $RBLSMTPD
+.B RBLSMTPD
 is set and is empty,
 .B rblsmtpd
 does not block mail. 
 
-If $RBLSMTPD is not set,
+If 
+.B RBLSMTPD 
+is not set,
 .B rblsmtpd
 looks up 
-.B $TCPREMOTEIP
+.I TCPREMOTEIP
 in the RBL, and blocks mail if 
-.B $TCPREMOTEIP
+.I TCPREMOTEIP
 is listed.
 .B tcpserver
 sets up
-.B $TCPREMOTEIP 
+.I TCPREMOTEIP 
 as the IP address of the remote host.
 .TP
 .B \-r \fIbase
@@ -107,7 +111,7 @@ and
 options.
 .B rblsmtpd
 tries each source in turn until it finds one that lists or anti-lists 
-.BR $TCPREMOTEIP . 
+.IR TCPREMOTEIP . 
 
 If you want to run your own RBL source or anti-RBL source for
 .BR rblsmtpd ,
@@ -125,7 +129,7 @@ in an interrogation mode.
 .B \-I
 interrogation mode; the RBL information is written on descriptor 2 and available
 via
-.B $RBLSMTPD
+.B RBLSMTPD
 for further decisions.
 .P
 .B Greetdelay options
@@ -138,7 +142,7 @@ provides an early delay of 'n' seconds for all connections.
 .TP
 .B \-W
 evaluate the environment variable
-.B $GREETDELAY 
+.B GREETDELAY 
 and potentially delay the call to
 .B qmail-smtpd
 after the RBL/anti-RBL lookup (if not already blocked).
@@ -146,7 +150,7 @@ after the RBL/anti-RBL lookup (if not already blocked).
 .B Temporary errors
 .P
 Normally, if 
-.B $RBLSMTPD 
+.B RBLSMTPD 
 is set,
 .B rblsmtpd
 uses a 451 error code in its limited SMTP conversation. 
@@ -155,7 +159,7 @@ It gives innocent relay operators a chance to see the problem,
 prohibit relaying, get off the RBL, and get the mail delivered. 
 
 However, if 
-.B $RBLSMTPD 
+.B RBLSMTPD 
 begins with a hyphen,
 .B rblsmtpd
 removes the hyphen and uses a 553 error code. 
@@ -182,6 +186,28 @@ If an RBL lookup fails temporarily, assume that the address is listed
 (but use a 451 error code even with -b). If an anti-RBL lookup fails temporarily, 
 assume that the address is not anti-listed (but use a 451 error code even if a 
 subsequent RBL lookup succeeds with -b). Unfortunately, this sometimes delays legitimate mail.
+
+.SH IPv4/IPv6 INVERSE NIBBLE FORMAT
+.B
+rblsmtpd 
+constructs from the incoming IP address \fITCPREMOTEIP\fR
+it's inverse nibble format, depending on the setting
+of \fIPROTO\fR. If \fIPROTO\fR=\fBTCP\fR
+the standard inverse IPv4 address scheme is used, whereas
+in case of \fIRPOTO\fR=\fBTCP6\fR the IPv6 inverse nibble format 
+is computed based on the expanded IPv6 address:
+.IP
+::1 => 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.(tld)
+.P
+
+.SH IPv4-MAPPED IPv6 ADDRESSES
+.B
+rblsmtpd 
+recognizes IPv4-mapped IPv6 addresses 
+and strips the IPv6 prefix 
+piror to build the IPv4 inverse address
+for the RBL lookup.
+
 .SH SEE ALSO
 tcpserver(1),
 tcprules(1),

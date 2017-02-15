@@ -27,4 +27,6 @@ extern const unsigned char V6any[16]; /*={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; */
 
 #define ip6_isv4mapped(ip) (byte_equal(ip,12,V4mappedprefix))
 
+#define V4MAPPREFIX "::ffff:"
+
 #endif

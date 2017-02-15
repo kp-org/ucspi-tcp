@@ -24,10 +24,9 @@ unsigned int ip6_expandaddr(char *src, stralloc *destination)
     
   if (!stralloc_copys(destination,"")) return -1;
 
-  for(i=0; i<16; i++)
-  {
-    bytetohex((unsigned char)ip6[i], hexvalue);
-    stralloc_catb(destination, hexvalue, 2);
+  for (i=0; i<16; i++) {
+    bytetohex((unsigned char)ip6[i],hexvalue);
+    stralloc_catb(destination,hexvalue,2);
     if (!((i+1)%2) && (i+1)<16) 
       if (!stralloc_cats(destination,":")) return -1;      /*Append ':' after every two bytes.*/
   }

@@ -22,7 +22,8 @@ unsigned int ip6_scan(const char *s, char ip6[16]) {
   unsigned int len = 0; 
   unsigned long u;
 
-  char *beginningp = s, *endbufferp, *writerbufferp, *doublecolonp;
+  const char *beginningp = s; 
+  char *endbufferp, *writerbufferp, *doublecolonp;
   unsigned int omittedzeroes = 0, doublecolonpindex;
   int saw_hexdigits;
   char ip6buffer[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}; 
@@ -38,10 +39,8 @@ unsigned int ip6_scan(const char *s, char ip6[16]) {
     return i;
   }
 
-  for (i = 0; i < 16; i++) {				 /*Set all elements of the array to zero.*/
-    ip6[i] = 0;
-    ip6buffer[i] = 0;
-  }
+  for (i = 0; i < 16; i++) 				 /*Set all elements of the array to zero.*/
+    ip6[i] = ip6buffer[i] = 0;
    
   writerbufferp = ip6buffer;       			/*writerp points to the next byte which will be written.*/
   endbufferp = writerbufferp + 15; 			/*endp points to the end of the ip6buffer.*/

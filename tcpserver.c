@@ -138,13 +138,13 @@ void found(char *data,unsigned int datalen)
 
 void doit(int t)
 {
-  int fakev4=0;
-  int j;
+  int mappedv4=0;
   uint32 scope_id;
+  char *stripaddr;
+  int j;
 
-  if (!forcev6 && ip6_isv4mapped(remoteip))
-    fakev4=1;
-  if (fakev4)
+  if (!forcev6 && ip6_isv4mapped(remoteip)) mappedv4=1;
+  if (mappedv4)
     remoteipstr[ip4_fmt(remoteipstr,remoteip+12)] = 0;
   else
     remoteipstr[ip6_compactaddr(remoteipstr,remoteip)] = 0;
@@ -170,7 +170,7 @@ void doit(int t)
   if (socket_local6(t,localip,&localport,&scope_id) == -1)
     strerr_die2sys(111,DROP,"unable to get local address: ");
 
-  if (fakev4)
+  if (mappedv4)
     localipstr[ip4_fmt(localipstr,localip+12)] = 0;
   else
     localipstr[ip6_compactaddr(localipstr,localip)] = 0;
@@ -182,7 +182,7 @@ void doit(int t)
 	if (!stralloc_0(&localhostsa)) drop_nomem();
 	localhost = localhostsa.s;
       }
-  env("PROTO",fakev4?"TCP":"TCP6");
+  env("PROTO",mappedv4?"TCP":"TCP6");
   env("TCPLOCALIP",localipstr);
   if (!noipv6) {
     localipstr[ip6_compactaddr(localipstr,localip)]=0;
@@ -191,7 +191,7 @@ void doit(int t)
 
   env("TCPLOCALPORT",localportstr);
   env("TCPLOCALHOST",localhost);
-  if (!fakev4 && scope_id)
+  if (!mappedv4 && scope_id)
     env("TCP6INTERFACE",socket_getifname(scope_id));
 
   if (flagremotehost)
@@ -232,15 +232,13 @@ void doit(int t)
       if (!flagallownorules) drop_rules();
     }
     else {
-      int fakev4=0;
-      char* temp;
-      if (!forcev6 && ip6_isv4mapped(remoteip))
-	fakev4=1;
-      if (fakev4)
-	temp=remoteipstr+7;
+      mappedv4 = 0;
+      if (!forcev6 && byte_equal(remoteipstr,7,V4MAPPREFIX)) mappedv4 = 1;
+      if (mappedv4)
+        stripaddr=remoteipstr+7;
       else
-	temp=remoteipstr;
-      if (rules(found,fdrules,temp,remotehost,flagremoteinfo ? tcpremoteinfo.s : 0) == -1) drop_rules();
+        stripaddr=remoteipstr;
+      if (rules(found,fdrules,stripaddr,remotehost,flagremoteinfo ? tcpremoteinfo.s : 0) == -1) drop_rules();
       close(fdrules);
     }
   }
@@ -254,7 +252,7 @@ void doit(int t)
     cats(":"); safecats(localipstr);
     cats(":"); safecats(localportstr);
     cats(" "); if (remotehost) safecats(remotehost);
-    cats(":"); safecats(remoteipstr);
+    cats(":"); safecats(stripaddr);
     cats(":"); if (flagremoteinfo) safecats(tcpremoteinfo.s);
     cats(":"); safecats(remoteportstr);
     cats("\n");

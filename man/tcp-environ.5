@@ -10,10 +10,10 @@ They are set up by
 and
 .BR tcpserver .
 Note that
-.BR TCPLOCALHOST ,
-.BR TCPREMOTEHOST ,
+.IR TCPLOCALHOST ,
+.IR TCPREMOTEHOST ,
 and
-.B TCPREMOTEINFO
+.I TCPREMOTEINFO
 can contain arbitrary characters.
 .TP 5
 PROTO
@@ -27,7 +27,7 @@ The domain name of the local host,
 with uppercase letters converted to lowercase.
 If there is no currently available domain name
 for the local IP address,
-.B TCPLOCALHOST
+.I TCPLOCALHOST
 is not set.
 .TP 5
 TCPLOCALIP
@@ -42,7 +42,7 @@ The domain name of the remote host,
 with uppercase letters converted to lowercase.
 If there is no currently available domain name
 for the remote IP address,
-.B TCPREMOTEHOST
+.I TCPREMOTEHOST
 is not set.
 .TP 5
 TCPREMOTEINFO
@@ -50,7 +50,7 @@ A connection-specific string, perhaps a username,
 supplied by the remote host
 via 931/1413/IDENT/TAP.
 If the remote host did not supply connection information,
-.B TCPREMOTEINFO
+.I TCPREMOTEINFO
 is not set.
 .TP 5
 TCPREMOTEIP

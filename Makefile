@@ -170,6 +170,14 @@ home warn-auto.sh date@.sh
 	> date@
 	chmod 755 date@
 
+date4@: \
+home warn-auto.sh date4@.sh 
+	rm -f date4@
+	cat warn-auto.sh date4@.sh \
+	| sed s}HOME}"`head -1 home`"}g \
+	> date4@
+	chmod 755 date4@
+
 delcr: \
 load delcr.o unix.a byte.a
 	./load delcr unix.a byte.a 
@@ -295,6 +303,14 @@ home warn-auto.sh finger@.sh
 	> finger@
 	chmod 755 finger@
 
+finger4@: \
+home warn-auto.sh finger4@.sh 
+	rm -f finger4@
+	cat warn-auto.sh finger4@.sh \
+	| sed s}HOME}"`head -1 home`"}g \
+	> finger4@
+	chmod 755 finger4@
+
 fixcrio: \
 load fixcrio.o time.a unix.a byte.a
 	./load fixcrio time.a unix.a byte.a 
@@ -347,6 +363,14 @@ home warn-auto.sh http@.sh
 	> http@
 	chmod 755 http@
 
+http4@: \
+home warn-auto.sh http4@.sh 
+	rm -f http4@
+	cat warn-auto.sh http4@.sh \
+	| sed s}HOME}"`head -1 home`"}g \
+	> http4@
+	chmod 755 http4@
+
 iopause.h: \
 choose compile trypoll.c iopause.h1 iopause.h2
 	./choose clr trypoll iopause.h1 iopause.h2 > iopause.h
@@ -372,6 +396,7 @@ it: it-base sysdeps
 it-base: \
 tcpserver tcprules tcprulescheck argv0 recordio tcpclient who@ date@ \
 finger@ http@ tcpcat mconnect mconnect-io addcr delcr fixcrio rblsmtpd \
+who4@ date4@ finger4@ http4@ tcpcat4 mconnect4 \
 sysdeps
 
 
@@ -410,6 +435,14 @@ home warn-auto.sh mconnect.sh
 	| sed s}HOME}"`head -1 home`"}g \
 	> mconnect
 	chmod 755 mconnect
+
+mconnect4: \
+home warn-auto.sh mconnect4.sh
+	rm -f mconnect4
+	cat warn-auto.sh mconnect4.sh \
+	| sed s}HOME}"`head -1 home`"}g \
+	> mconnect4
+	chmod 755 mconnect4
 
 mconnect-io: \
 load mconnect-io.o unix.a byte.a
@@ -468,7 +501,7 @@ rblsmtpd.o: \
 compile rblsmtpd.c byte.h str.h scan.h fmt.h env.h exit.h sig.h \
 buffer.h readwrite.h sgetopt.h subgetopt.h strerr.h stralloc.h \
 gen_alloc.h commands.h pathexec.h dns.h stralloc.h iopause.h taia.h \
-tai.h uint64.h taia.h
+tai.h uint64.h taia.h ip6.h
 	./compile rblsmtpd.c
 
 readclose.o: \
@@ -711,6 +744,14 @@ home warn-auto.sh tcpcat.sh home
 	> tcpcat
 	chmod 755 tcpcat
 
+tcpcat4: \
+home warn-auto.sh tcpcat4.sh home
+	rm -f tcpcat4
+	cat warn-auto.sh tcpcat4.sh \
+	| sed s}HOME}"`head -1 home`"}g \
+	> tcpcat4
+	chmod 755 tcpcat4
+
 tcpclient: \
 load tcpclient.o remoteinfo6.o dns.a time.a unix.a \
 byte.a socket.lib byte.h timeoutconn6.o
@@ -855,6 +896,14 @@ home warn-auto.sh who@.sh
 	| sed s}HOME}"`head -1 home`"}g \
 	> who@
 	chmod 755 who@
+
+who4@: \
+home warn-auto.sh who4@.sh 
+	rm -f who4@
+	cat warn-auto.sh who4@.sh \
+	| sed s}HOME}"`head -1 home`"}g \
+	> who4@
+	chmod 755 who4@
 
 socket_conn6.o: \
 compile socket_conn6.c socket.h uint16.h haveip6.h error.h ip6.h \

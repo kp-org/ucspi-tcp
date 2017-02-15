@@ -63,15 +63,14 @@ static int doit(void (*callback)(char *, unsigned int), char *ip, char *host, ch
     }
   }
 
-  if (!stralloc_copys(&rules_name,ip)) return -1;		/* 3. IPv6/IPv4 */
-  if (ipv6) {
+  if (ipv6) {							/* 3. IPv6/IPv4 */
     if (ip6_expandaddr(ip,&ipstring) == 1) {		
         if (!stralloc_copyb(&rules_name,ipstring.s,ipstring.len)) return -1;
         r = dorule(callback);
         if (r) return r;
     }
-  }
-  if (!ipv6) {						
+  } else {
+    if (!stralloc_copys(&rules_name,ip)) return -1;
     r = dorule(callback);
     if (r) return r;
   }
@@ -83,8 +82,8 @@ static int doit(void (*callback)(char *, unsigned int), char *ip, char *host, ch
     if (r) return r;
   }
 
-  if (!stralloc_copys(&rules_name,ip)) return -1;		/* 5. IPv4 class-based */	
-  if (!ipv6) {
+  if (!ipv6) {							/* 5. IPv4 class-based */
+    if (!stralloc_copys(&rules_name,ip)) return -1;
     while (rules_name.len > 0) {
       if (ip[rules_name.len - 1] == '.') {
         r = dorule(callback);
@@ -94,7 +93,6 @@ static int doit(void (*callback)(char *, unsigned int), char *ip, char *host, ch
     } 
   }
 
-  if (!stralloc_copys(&rules_name,ip)) return -1;		
   if (ipv6) {							/* 6. IPv6/IPv4 CIDR */
     if (ip6tobitstring(rules_name.s,&ipstring,128) == 1) {
       for (p=129; p>1; p--) {
@@ -104,8 +102,8 @@ static int doit(void (*callback)(char *, unsigned int), char *ip, char *host, ch
         if (r) return r;
       }
     }
-  }
-  if (!ipv6) {
+  } else {
+    if (!stralloc_copys(&rules_name,ip)) return -1;		
     if (getaddressasbit(ip,32,&ipstring) != -1) {	
       for (p=33; p>1; p--) {
         if (!stralloc_copys(&rules_name,"_")) return -1;

@@ -182,6 +182,13 @@
 	doc: updated tcprules and tcpserver man page.
 20121002 (feh)
 	removed obsolet it-check=d.
+20121229 (feh)
+	fixed flaw in tcpserver's IPv4-mapped IPv6 behavior and
+	added increased recognition for IPv4-mapped IPv6 addresses.
+	added clones of (http@ +-> http4@) helper progs.
+	added IPv6 inverse lookup for rblsmtpd.
+	updated man pages.
+	
 	
 
-ucspi-tcp6 -- version: 0.95, post-beta.
+ucspi-tcp6 -- version: 0.96, beta.
