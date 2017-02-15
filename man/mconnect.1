@@ -2,16 +2,21 @@
 .SH NAME
 mconnect \- connect to the SMTP server on a host
 .SH SYNTAX
-.B mconnect/monnect4
+.B mconnect
+[
+.I -version
 [
 .I host
 [
 .I port
 ]
 ]
+]
 .SH DESCRIPTION
-.B mconnect/mconnect4
-connects to
+.B mconnect
+connects vi IP prototocol
+.I -version
+('-4', '6') to
 .I port
 on
 .IR host .
@@ -22,9 +27,15 @@ Meanwhile it prints anything it receives from
 .IR host .
 
 If
+.I -version
+is not supplied,
+.B mconnect
+uses by default IPv6.
+
+If
 .I port
 is not supplied,
-.B mconnect/mconnect4
+.B mconnect
 uses port 25 (SMTP).
 
 If

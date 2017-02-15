@@ -342,6 +342,38 @@ reads the environment variable
 which can be used to specify the
 recursive DNS Resolver.
 
+.SH "ENVIRONMENT VARIABLES SET"
+.B tcpservers
+provides the following environment variables:
+
+.I PROTO
+this is either TCP or TCP6.
+
+The interface name for IPv6 connections:
+.IR TCP6INTERFACE .
+
+The local information:
+.IR TCPLOCALIP ,
+.IR TCPLOCALPORT ,
+.IR TCPLOCALHOST .
+
+IP address of connection:
+.IR TCPREMOTEIP 
+and
+.IR TCP6REMOTEIP 
+which is the IPv4-mapped IPv6 address in case of IPv4 connections.
+
+The remote port number:
+.IR TCPREMOTEPORT ,
+.IR TCP6REMOTEPORT .
+
+The hostname (FQDN) of the peer, if available:
+.IR TCPREMOTEHOST ,
+.IR TCP6REMOTEHOST .
+
+In case of a successfull IDENT lookup:
+.IR TCPREMOTEINFO .
+
 .SH LOGGING
 Invoking
 .B tcpserver

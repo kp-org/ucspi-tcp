@@ -53,6 +53,7 @@ uint16 remoteport;
 char remoteportstr[FMT_ULONG];
 char remoteip[16];
 char remoteipstr[IP6_FMT];
+char remoteip6str[IP6_FMT];
 static stralloc remotehostsa;
 char *remotehost = 0;
 
@@ -143,10 +144,15 @@ void doit(int t)
   int j;
 
   if (!forcev6 && ip6_isv4mapped(remoteip)) mappedv4 = 1;
+
   if (mappedv4)
-    remoteipstr[ip4_fmt(remoteipstr,remoteip+12)] = 0;
-  else
-    remoteipstr[ip6_compactaddr(remoteipstr,remoteip)] = 0;
+    remoteipstr[ip4_fmt(remoteipstr, remoteip + 12)] = 0;
+  else {
+    if (noipv6 && !forcev6)
+      remoteipstr[ip4_fmt(remoteipstr,remoteip)] = 0;
+    else
+      remoteipstr[ip6_compactaddr(remoteipstr,remoteip)] = 0;
+  }
 
   if (verbosity >= 2) {
     strnum[fmt_ulong(strnum,getpid())] = 0;
@@ -208,11 +214,15 @@ void doit(int t)
 	  remotehost = remotehostsa.s;
 	}
       }
-  if (!noipv6)  
-    remoteipstr[ip6_compactaddr(remoteipstr,remoteip)] = 0;
   env("TCPREMOTEIP",remoteipstr);
   env("TCPREMOTEPORT",remoteportstr);
   env("TCPREMOTEHOST",remotehost);
+  if (!noipv6) {
+    remoteip6str[ip6_compactaddr(remoteip6str, remoteip)] = 0;
+    env("TCP6REMOTEIP",remoteip6str);
+    env("TCP6REMOTEPORT",remoteportstr);
+    env("TCP6REMOTEHOST",remotehost);
+  }
 
   if (flagremoteinfo) {
     if (remoteinfo6(&tcpremoteinfo,remoteip,remoteport,localip,localport,timeout,netif) == -1)

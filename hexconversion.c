@@ -7,17 +7,17 @@
  */
 void bytetohex(unsigned char decimal, char hex[3]) {
 
-    char* hexdigits = "0123456789ABCDEF";
-    int rest, number;
-    hex[0] = '0';
-    hex[1] = '0';
-    hex[2] = '\0';
+  char* hexdigits = "0123456789ABCDEF";
+  int rest, number;
+  hex[0] = '0';
+  hex[1] = '0';
+  hex[2] = '\0';
 
-    number = decimal / 16;
-    rest = decimal % 16;
+  number = decimal / 16;
+  rest = decimal % 16;
 
-    hex[0] = hexdigits[number];
-    hex[1] = hexdigits[rest];
+  hex[0] = hexdigits[number];
+  hex[1] = hexdigits[rest];
 }
 
 char tohex(char num) {
@@ -29,7 +29,7 @@ char tohex(char num) {
     return -1;
 }
 
- int fromhex(unsigned char c) {
+int fromhex(unsigned char c) {
   if (c>='0' && c<='9')
     return c-'0';
   else if (c>='A' && c<='F')

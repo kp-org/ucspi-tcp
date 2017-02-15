@@ -197,5 +197,12 @@
 	flaw: replaced pathexec_run with pathexec in call of client 
 	since otherwise modified env will not be promoted
 	and interrogation mode failes.
+20130526 (feh)
+	streamlined client script and beautified Makefile.
+	changed UI for clients scripts to support IPv4 as well.
+20130820 (feh)
+	added env vars TCP6REMOTEIP, TCP6REMOTEPORT, TCP6REMTOEHOST.
+	tx. Roberto Puzzanghera	
+	
 
-ucspi-tcp6 -- version: 0.98, beta.
+ucspi-tcp6 -- version: 0.99, beta.

@@ -4,14 +4,26 @@ who@ \- print list of active users on a host
 .SH SYNTAX
 .B who@
 [
+.I -version
+[
 .I host
+]
 ]
 .SH DESCRIPTION
 .B who@
-connects to TCP port 11 (Systat) on
+connects via IP protocol 
+.I -version 
+('-4', '-6')
+to TCP port 11 (Systat) on
 .I host
 and prints any data it receives.
 It removes CR and converts unprintable characters to a visible format.
+
+If
+.I -version
+is not supplied,
+.B who@
+uses by default IPv6.
 
 If
 .I host
@@ -23,7 +35,7 @@ Some computers respond to port 11 with a list of active users.
 For example, they may be running
 
 .EX
-     tcpserver 0 11 who &
+     tcpserver -4 0 11 who &
 .EE
 .SH "SEE ALSO"
 cat(1),

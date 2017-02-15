@@ -2,7 +2,9 @@
 .SH NAME
 http@ \- get a web page from a host through HTTP
 .SH SYNTAX
-.B http@/http4@
+.B http@
+[
+.I -version 
 [
 .I host
 [
@@ -12,9 +14,12 @@ http@ \- get a web page from a host through HTTP
 ]
 ]
 ]
+]
 .SH DESCRIPTION
-.B http@/http4@
-connects to
+.B http@
+connects via IP protocol 
+.I -version 
+('-4', '-6') to
 .I port
 on
 .IR host ,
@@ -27,15 +32,21 @@ and prints any data it receives,
 removing CR from the end of each line.
 
 If
+.I -version
+is not supplied
+.B http@
+uses by default IPv6.
+
+If
 .I port
 is not supplied,
-.B http@/http4@
+.B http@
 uses port 80 (HTTP).
 
 If
 .I page
 is not supplied,
-.B http@/http4@
+.B http@
 sends
 .B GET /
 to
@@ -44,7 +55,7 @@ to
 If
 .I host
 is not supplied,
-.B http@/http4@
+.B http@
 connects to the local host.
 .SH "SEE ALSO"
 addcr(1),
