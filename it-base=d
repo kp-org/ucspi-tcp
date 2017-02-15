@@ -3,6 +3,7 @@ argv0
 delcr
 fixcrio
 mconnect
+mconnect4
 mconnect-io
 rblsmtpd
 recordio
@@ -12,6 +13,10 @@ tcprules
 tcprulescheck
 tcpserver
 date@
+date@4
 finger@
+finger@4
 http@
+http@4
 who@
+who@4

@@ -32,7 +32,7 @@ int getaddressasbit(char *ip, int prefix, stralloc *ip4string)
   for (;;) {
     num = 0;
     count = 1;
-    if (getnumber(ip + pos,posl, &num) == -1) return -1;
+    if (getnumber(ip + pos,posl, &num) == -1) return 2;
     if (num > 255 || num < 0) return 2;
     
     for (i = 1; i < 9; i++) {

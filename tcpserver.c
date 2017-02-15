@@ -99,7 +99,6 @@ void safecats(char *s)
     if (ch < 33) ch = '?';
     if (ch > 126) ch = '?';
     if (ch == '%') ch = '?'; /* logger stupidity */
-/*    if (ch == ':') ch = '?'; */
     append(&ch);
   }
   cats("...");
@@ -138,12 +137,12 @@ void found(char *data,unsigned int datalen)
 
 void doit(int t)
 {
-  int mappedv4=0;
+  int mappedv4 = 0;
   uint32 scope_id;
   char *stripaddr;
   int j;
 
-  if (!forcev6 && ip6_isv4mapped(remoteip)) mappedv4=1;
+  if (!forcev6 && ip6_isv4mapped(remoteip)) mappedv4 = 1;
   if (mappedv4)
     remoteipstr[ip4_fmt(remoteipstr,remoteip+12)] = 0;
   else
@@ -171,7 +170,7 @@ void doit(int t)
     strerr_die2sys(111,DROP,"unable to get local address: ");
 
   if (mappedv4)
-    localipstr[ip4_fmt(localipstr,localip+12)] = 0;
+    localipstr[ip4_fmt(localipstr,&localip[12])] = 0;
   else
     localipstr[ip6_compactaddr(localipstr,localip)] = 0;
   remoteportstr[fmt_ulong(remoteportstr,remoteport)] = 0;
@@ -185,7 +184,7 @@ void doit(int t)
   env("PROTO",mappedv4?"TCP":"TCP6");
   env("TCPLOCALIP",localipstr);
   if (!noipv6) {
-    localipstr[ip6_compactaddr(localipstr,localip)]=0;
+    localipstr[ip6_compactaddr(localipstr,localip)] = 0;
     env("TCPLOCALIP",localipstr);
   }
 
@@ -209,11 +208,9 @@ void doit(int t)
 	  remotehost = remotehostsa.s;
 	}
       }
+  if (!noipv6)  
+    remoteipstr[ip6_compactaddr(remoteipstr,remoteip)] = 0;
   env("TCPREMOTEIP",remoteipstr);
-  if (!noipv6) {
-    remoteipstr[ip6_compactaddr(remoteipstr,remoteip)]=0;
-    env("TCPREMOTEIP",remoteipstr);
-  }
   env("TCPREMOTEPORT",remoteportstr);
   env("TCPREMOTEHOST",remotehost);
 
@@ -224,6 +221,10 @@ void doit(int t)
   }
   env("TCPREMOTEINFO",flagremoteinfo ? tcpremoteinfo.s : 0);
 
+  stripaddr=remoteipstr;
+  if (!forcev6 && byte_equal(remoteipstr,7,V4MAPPREFIX)) 
+    stripaddr = remoteipstr+7;
+
   if (fnrules) {
     int fdrules;
     fdrules = open_read(fnrules);
@@ -232,12 +233,6 @@ void doit(int t)
       if (!flagallownorules) drop_rules();
     }
     else {
-      mappedv4 = 0;
-      if (!forcev6 && byte_equal(remoteipstr,7,V4MAPPREFIX)) mappedv4 = 1;
-      if (mappedv4)
-        stripaddr=remoteipstr+7;
-      else
-        stripaddr=remoteipstr;
       if (rules(found,fdrules,stripaddr,remotehost,flagremoteinfo ? tcpremoteinfo.s : 0) == -1) drop_rules();
       close(fdrules);
     }

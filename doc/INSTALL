@@ -4,7 +4,7 @@ Installation supplements
 The ./src directory includes some conf-* files for your adjustments:
 
 1. Plattform dependent customization
-- conf-cc (don't need to be touched)
+- conf-cc (don't need to be touched -- except if clang support is needed).
 - conf-ld (remove option '-m64' and/or replace it with your architecure; 
            ie. installing on x86-32 needs removing this flag)
 
@@ -34,4 +34,4 @@ Caution: On MacOS X calls to tcpclient/tcpserver with unresolveable hostnames
 	results in stalled programs. 
 
 
-Erwin Hoffmann, Hoehn, 03-10-2012
+Erwin Hoffmann, Hoehn, 19-01-2013.

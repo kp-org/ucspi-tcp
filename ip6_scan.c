@@ -33,7 +33,7 @@ unsigned int ip6_scan(const char *s, char ip6[16]) {
   stralloc_copyb(&addr,s,str_len(s));
   stralloc_0(&addr);
 
-  if (i = ip4_scan((char*) s, ip6 + 12)) { 		/*Mapped IPv4 address.*/
+  if (i = ip4_scan((char *)s, ip6 + 12)) { 		/*Mapped IPv4 address.*/
     for (len = 0; len < 12; ++len) 
       ip6[len] = IP4mappedMask[len];
     return i;

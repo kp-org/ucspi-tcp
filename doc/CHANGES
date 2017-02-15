@@ -188,7 +188,11 @@
 	added clones of (http@ +-> http4@) helper progs.
 	added IPv6 inverse lookup for rblsmtpd.
 	updated man pages.
-	
+20130119 (feh)
+	fixed bug in tcpserver's core dump without cdb (display IPv6).
+	added interrogation mode (and not stub any more).
+	added IPv6 lookup for anti-rbl.
+	changed behavior on greedelay option.
 	
 
-ucspi-tcp6 -- version: 0.96, beta.
+ucspi-tcp6 -- version: 0.97, beta.

@@ -211,7 +211,13 @@ Print error messages.
 .TP
 .B \-v
 Verbose.
-Print all available messages.
+Print all available messages. 
+
+Note: IPv4-mapped IPv6 addresess are displayed initially in the format
+.I ::ffff:a.b.c.d
+and later in their generic IPv4 form, which is also used to query the 
+.IR rules.cdb .
+
 .SH "DATA-GATHERING OPTIONS"
 .TP
 .B \-p
